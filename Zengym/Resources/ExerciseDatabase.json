@@ -1,0 +1,572 @@
+[
+    {
+        "id": "leg_press",
+        "name": "Leg Press 45°",
+        "muscleGroup": "Quadríceps",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "12-15",
+        "restSeconds": 60,
+        "durationMinutes": 6,
+        "contraindications": ["Joelho"],
+        "checklist": [
+            "Pés na largura dos ombros na plataforma",
+            "Desça devagar, controlando o peso",
+            "Mantenha a lombar colada no banco"
+        ],
+        "dangerAlert": "Não estique o joelho totalmente no final da subida. Mantenha uma leve flexão.",
+        "animationSymbol": "figure.strengthtraining.traditional",
+        "instructions": "Sente-se no aparelho com as costas bem apoiadas. Posicione os pés na plataforma e empurre controladamente."
+    },
+    {
+        "id": "cadeira_extensora",
+        "name": "Cadeira Extensora",
+        "muscleGroup": "Quadríceps",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "12-15",
+        "restSeconds": 60,
+        "durationMinutes": 5,
+        "contraindications": ["Joelho"],
+        "checklist": [
+            "Ajuste o encosto para que o joelho fique alinhado com o eixo do aparelho",
+            "Estenda as pernas de forma controlada",
+            "Segure por 1 segundo no topo do movimento"
+        ],
+        "dangerAlert": "Não use impulso para levantar o peso. O movimento deve ser lento e controlado.",
+        "animationSymbol": "figure.strengthtraining.traditional",
+        "instructions": "Sente-se no aparelho e posicione as canelas atrás do rolo. Estenda as pernas lentamente."
+    },
+    {
+        "id": "mesa_flexora",
+        "name": "Mesa Flexora",
+        "muscleGroup": "Posteriores",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "12-15",
+        "restSeconds": 60,
+        "durationMinutes": 5,
+        "contraindications": ["Joelho"],
+        "checklist": [
+            "Deite-se de bruços com o rolo na parte de trás do tornozelo",
+            "Flexione os joelhos trazendo os calcanhares em direção aos glúteos",
+            "Desça devagar, sem deixar o peso cair"
+        ],
+        "dangerAlert": "Não levante o quadril do banco durante o exercício. Mantenha o corpo colado.",
+        "animationSymbol": "figure.strengthtraining.traditional",
+        "instructions": "Deite-se de bruços na mesa flexora e posicione os tornozelos atrás do rolo acolchoado."
+    },
+    {
+        "id": "cadeira_adutora",
+        "name": "Cadeira Adutora",
+        "muscleGroup": "Quadríceps",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "15",
+        "restSeconds": 45,
+        "durationMinutes": 4,
+        "contraindications": [],
+        "checklist": [
+            "Sente-se com as costas apoiadas no encosto",
+            "Feche as pernas de forma controlada",
+            "Retorne à posição inicial lentamente"
+        ],
+        "dangerAlert": "Não abra as pernas além do que é confortável na posição inicial. Respeite seu limite.",
+        "animationSymbol": "figure.strengthtraining.traditional",
+        "instructions": "Sente-se na cadeira adutora com as costas bem apoiadas. Feche e abra as pernas controladamente."
+    },
+    {
+        "id": "cadeira_abdutora",
+        "name": "Cadeira Abdutora",
+        "muscleGroup": "Glúteos",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "15",
+        "restSeconds": 45,
+        "durationMinutes": 4,
+        "contraindications": [],
+        "checklist": [
+            "Sente-se com as costas apoiadas no encosto",
+            "Abra as pernas empurrando contra as almofadas",
+            "Controle o retorno, não deixe o peso bater"
+        ],
+        "dangerAlert": "Evite usar o tronco para gerar impulso. O movimento vem apenas das pernas.",
+        "animationSymbol": "figure.strengthtraining.traditional",
+        "instructions": "Sente com as costas apoiadas e abra as pernas empurrando contra as almofadas laterais."
+    },
+    {
+        "id": "panturrilha_maquina",
+        "name": "Panturrilha no Aparelho",
+        "muscleGroup": "Panturrilha",
+        "equipment": "Máquina",
+        "sets": 4,
+        "reps": "15-20",
+        "restSeconds": 30,
+        "durationMinutes": 4,
+        "contraindications": [],
+        "checklist": [
+            "Posicione a ponta dos pés na plataforma",
+            "Suba na ponta dos pés o máximo possível",
+            "Desça devagar, sentindo o alongamento"
+        ],
+        "dangerAlert": "Não use pesos muito pesados. A panturrilha responde melhor a muitas repetições com controle.",
+        "animationSymbol": "figure.walk",
+        "instructions": "Posicione-se no aparelho com os ombros sob as almofadas e eleve os calcanhares."
+    },
+    {
+        "id": "supino_maquina",
+        "name": "Supino na Máquina",
+        "muscleGroup": "Peito",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "10-12",
+        "restSeconds": 60,
+        "durationMinutes": 6,
+        "contraindications": ["Ombro"],
+        "checklist": [
+            "Ajuste o banco para que os pegadores fiquem na altura do peito",
+            "Empurre os pegadores para frente de forma controlada",
+            "Volte devagar até sentir um leve alongamento no peito"
+        ],
+        "dangerAlert": "Não deixe os cotovelos irem muito para trás. Isso sobrecarrega o ombro.",
+        "animationSymbol": "figure.strengthtraining.traditional",
+        "instructions": "Sente-se na máquina de supino com as costas apoiadas. Empurre os pegadores para frente."
+    },
+    {
+        "id": "peck_deck",
+        "name": "Peck Deck (Voador)",
+        "muscleGroup": "Peito",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "12-15",
+        "restSeconds": 60,
+        "durationMinutes": 5,
+        "contraindications": ["Ombro"],
+        "checklist": [
+            "Ajuste o banco para que os braços fiquem paralelos ao chão",
+            "Traga os braços para frente, apertando o peito",
+            "Abra devagar, controlando o peso"
+        ],
+        "dangerAlert": "Não abra os braços além de 90° para trás. Isso pode lesar o ombro.",
+        "animationSymbol": "figure.arms.open",
+        "instructions": "Sente-se na máquina com os antebraços nos apoios. Feche os braços na frente do peito."
+    },
+    {
+        "id": "crucifixo_polia",
+        "name": "Crucifixo na Polia",
+        "muscleGroup": "Peito",
+        "equipment": "Polia",
+        "sets": 3,
+        "reps": "12-15",
+        "restSeconds": 60,
+        "durationMinutes": 5,
+        "contraindications": ["Ombro"],
+        "checklist": [
+            "Fique no centro da polia com um pé à frente",
+            "Traga os braços para frente com os cotovelos levemente flexionados",
+            "Controle a abertura dos braços na volta"
+        ],
+        "dangerAlert": "Não estenda os cotovelos completamente. Mantenha-os sempre levemente dobrados.",
+        "animationSymbol": "figure.arms.open",
+        "instructions": "Posicione-se entre as polias altas. Segure os pegadores e traga os braços para frente do corpo."
+    },
+    {
+        "id": "pulldown",
+        "name": "Pulldown (Puxada Frontal)",
+        "muscleGroup": "Costas",
+        "equipment": "Polia",
+        "sets": 3,
+        "reps": "10-12",
+        "restSeconds": 60,
+        "durationMinutes": 6,
+        "contraindications": ["Ombro"],
+        "checklist": [
+            "Segure a barra com as mãos na largura dos ombros",
+            "Puxe a barra até a altura do peito",
+            "Contraia as costas no final do movimento"
+        ],
+        "dangerAlert": "Não puxe a barra atrás da cabeça. Isso machuca o pescoço e o ombro.",
+        "animationSymbol": "figure.rowing",
+        "instructions": "Sente-se na máquina e segure a barra com pegada aberta. Puxe até o peito, controladamente."
+    },
+    {
+        "id": "remada_maquina",
+        "name": "Remada na Máquina",
+        "muscleGroup": "Costas",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "10-12",
+        "restSeconds": 60,
+        "durationMinutes": 6,
+        "contraindications": ["Lombar"],
+        "checklist": [
+            "Apoie o peito no suporte da máquina",
+            "Puxe os pegadores em direção ao corpo",
+            "Aperte as escápulas no final do movimento"
+        ],
+        "dangerAlert": "Não balance o tronco para frente e para trás. O peito deve ficar sempre apoiado.",
+        "animationSymbol": "figure.rowing",
+        "instructions": "Sente-se na máquina com o peito no apoio. Puxe os pegadores em direção ao abdômen."
+    },
+    {
+        "id": "remada_baixa_polia",
+        "name": "Remada Baixa na Polia",
+        "muscleGroup": "Costas",
+        "equipment": "Polia",
+        "sets": 3,
+        "reps": "10-12",
+        "restSeconds": 60,
+        "durationMinutes": 6,
+        "contraindications": ["Lombar"],
+        "checklist": [
+            "Sente-se com os pés nos apoios e joelhos levemente flexionados",
+            "Puxe o triângulo em direção ao abdômen",
+            "Mantenha a coluna ereta durante todo o movimento"
+        ],
+        "dangerAlert": "Não arredonde as costas ao puxar. Isso coloca pressão perigosa na lombar.",
+        "animationSymbol": "figure.rowing",
+        "instructions": "Sente-se na polia baixa com as pernas levemente flexionadas. Puxe o triângulo mantendo a coluna reta."
+    },
+    {
+        "id": "desenvolvimento_maquina",
+        "name": "Desenvolvimento na Máquina",
+        "muscleGroup": "Ombros",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "10-12",
+        "restSeconds": 60,
+        "durationMinutes": 5,
+        "contraindications": ["Ombro", "Pescoço"],
+        "checklist": [
+            "Ajuste o banco para que os pegadores fiquem na altura dos ombros",
+            "Empurre para cima de forma controlada",
+            "Não trave os cotovelos no topo"
+        ],
+        "dangerAlert": "Não desça os pegadores abaixo da linha dos ombros. Isso pode lesar a articulação.",
+        "animationSymbol": "figure.arms.open",
+        "instructions": "Sente-se na máquina de desenvolvimento com as costas apoiadas. Empurre os pegadores acima da cabeça."
+    },
+    {
+        "id": "elevacao_lateral_polia",
+        "name": "Elevação Lateral na Polia",
+        "muscleGroup": "Ombros",
+        "equipment": "Polia",
+        "sets": 3,
+        "reps": "12-15",
+        "restSeconds": 45,
+        "durationMinutes": 5,
+        "contraindications": ["Ombro"],
+        "checklist": [
+            "Fique de lado para a polia baixa",
+            "Eleve o braço até a linha do ombro, não mais",
+            "Desça devagar, controlando o peso"
+        ],
+        "dangerAlert": "Não levante o braço acima da linha do ombro. Isso pode causar impacto no ombro.",
+        "animationSymbol": "figure.arms.open",
+        "instructions": "Posicione-se de lado para a polia baixa. Segure o pegador e eleve o braço lateralmente."
+    },
+    {
+        "id": "rosca_scott_maquina",
+        "name": "Rosca Scott na Máquina",
+        "muscleGroup": "Bíceps",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "10-12",
+        "restSeconds": 45,
+        "durationMinutes": 5,
+        "contraindications": [],
+        "checklist": [
+            "Apoie os braços completamente no suporte",
+            "Flexione os cotovelos subindo o peso",
+            "Desça de forma lenta e controlada"
+        ],
+        "dangerAlert": "Não estenda os cotovelos completamente na descida. Mantenha uma leve flexão para proteger as articulações.",
+        "animationSymbol": "figure.strengthtraining.functional",
+        "instructions": "Sente-se na máquina com os braços apoiados no suporte. Flexione os cotovelos para subir o peso."
+    },
+    {
+        "id": "rosca_polia",
+        "name": "Rosca Direta na Polia",
+        "muscleGroup": "Bíceps",
+        "equipment": "Polia",
+        "sets": 3,
+        "reps": "12-15",
+        "restSeconds": 45,
+        "durationMinutes": 5,
+        "contraindications": [],
+        "checklist": [
+            "Fique de frente para a polia baixa",
+            "Flexione os cotovelos mantendo-os junto ao corpo",
+            "Controle a descida, não deixe o peso cair"
+        ],
+        "dangerAlert": "Não balance o corpo para ajudar a subir o peso. Use apenas a força dos bíceps.",
+        "animationSymbol": "figure.strengthtraining.functional",
+        "instructions": "Posicione-se de frente para a polia baixa com a barra reta. Flexione os cotovelos."
+    },
+    {
+        "id": "triceps_polia",
+        "name": "Tríceps na Polia",
+        "muscleGroup": "Tríceps",
+        "equipment": "Polia",
+        "sets": 3,
+        "reps": "12-15",
+        "restSeconds": 45,
+        "durationMinutes": 5,
+        "contraindications": [],
+        "checklist": [
+            "Fique de frente para a polia alta, cotovelos junto ao corpo",
+            "Estenda os cotovelos empurrando a barra para baixo",
+            "Mantenha os cotovelos fixos, sem abrir"
+        ],
+        "dangerAlert": "Não incline o tronco sobre a barra. Mantenha o corpo ereto para isolar o tríceps.",
+        "animationSymbol": "figure.strengthtraining.functional",
+        "instructions": "Posicione-se de frente para a polia alta. Segure a barra com pegada fechada e empurre para baixo."
+    },
+    {
+        "id": "triceps_frances_polia",
+        "name": "Tríceps Francês na Polia",
+        "muscleGroup": "Tríceps",
+        "equipment": "Polia",
+        "sets": 3,
+        "reps": "10-12",
+        "restSeconds": 45,
+        "durationMinutes": 5,
+        "contraindications": ["Ombro"],
+        "checklist": [
+            "Fique de costas para a polia baixa",
+            "Estenda os braços acima da cabeça",
+            "Desça devagar até sentir o alongamento"
+        ],
+        "dangerAlert": "Não abra os cotovelos para os lados. Eles devem apontar para frente durante todo o movimento.",
+        "animationSymbol": "figure.strengthtraining.functional",
+        "instructions": "Fique de costas para a polia baixa segurando a corda. Estenda os braços acima da cabeça."
+    },
+    {
+        "id": "abdominal_maquina",
+        "name": "Abdominal na Máquina",
+        "muscleGroup": "Abdômen",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "15-20",
+        "restSeconds": 45,
+        "durationMinutes": 4,
+        "contraindications": ["Lombar", "Pescoço"],
+        "checklist": [
+            "Ajuste o peso leve para começar",
+            "Contraia o abdômen para flexionar o tronco",
+            "Volte devagar à posição inicial"
+        ],
+        "dangerAlert": "Não puxe o pescoço com as mãos. A força deve vir do abdômen, não do pescoço.",
+        "animationSymbol": "figure.core.training",
+        "instructions": "Sente-se na máquina com as mãos nos pegadores. Flexione o tronco usando a força do abdômen."
+    },
+    {
+        "id": "prancha",
+        "name": "Prancha Isométrica",
+        "muscleGroup": "Abdômen",
+        "equipment": "Corporal",
+        "sets": 3,
+        "reps": "30 seg",
+        "restSeconds": 30,
+        "durationMinutes": 3,
+        "contraindications": ["Lombar", "Ombro"],
+        "checklist": [
+            "Apoie os antebraços e a ponta dos pés no chão",
+            "Mantenha o corpo reto como uma tábua",
+            "Contraia o abdômen e os glúteos"
+        ],
+        "dangerAlert": "Não deixe o quadril cair ou subir demais. O corpo deve formar uma linha reta dos ombros aos pés.",
+        "animationSymbol": "figure.core.training",
+        "instructions": "Deite-se de bruços e apoie os antebraços no chão. Eleve o corpo mantendo-o reto por 30 segundos."
+    },
+    {
+        "id": "leg_curl_sentado",
+        "name": "Leg Curl Sentado",
+        "muscleGroup": "Posteriores",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "12-15",
+        "restSeconds": 60,
+        "durationMinutes": 5,
+        "contraindications": ["Joelho"],
+        "checklist": [
+            "Ajuste o rolo acima do tornozelo",
+            "Flexione os joelhos puxando o rolo para baixo",
+            "Segure por 1 segundo na contração máxima"
+        ],
+        "dangerAlert": "Não use muito peso. Comece leve para sentir o músculo trabalhando corretamente.",
+        "animationSymbol": "figure.strengthtraining.traditional",
+        "instructions": "Sente-se na máquina e posicione o rolo na parte de trás do tornozelo. Flexione os joelhos."
+    },
+    {
+        "id": "hack_squat",
+        "name": "Hack Squat (Agachamento Guiado)",
+        "muscleGroup": "Quadríceps",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "10-12",
+        "restSeconds": 90,
+        "durationMinutes": 7,
+        "contraindications": ["Joelho", "Lombar"],
+        "checklist": [
+            "Apoie as costas na almofada completamente",
+            "Pés na largura dos ombros na plataforma",
+            "Desça até 90° de flexão no joelho"
+        ],
+        "dangerAlert": "Não desça além de 90° no joelho. Isso coloca muita pressão na articulação.",
+        "animationSymbol": "figure.strengthtraining.traditional",
+        "instructions": "Posicione-se na máquina com as costas apoiadas. Agache de forma controlada até 90° de flexão."
+    },
+    {
+        "id": "gluteo_maquina",
+        "name": "Glúteo na Máquina",
+        "muscleGroup": "Glúteos",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "12-15",
+        "restSeconds": 45,
+        "durationMinutes": 5,
+        "contraindications": ["Lombar"],
+        "checklist": [
+            "Apoie o peito ou as mãos no suporte",
+            "Empurre a plataforma para trás com o calcanhar",
+            "Aperte o glúteo no final do movimento"
+        ],
+        "dangerAlert": "Não arqueje a lombar para empurrar mais peso. Mantenha a coluna neutra.",
+        "animationSymbol": "figure.walk",
+        "instructions": "Posicione-se na máquina de glúteos. Empurre a plataforma para trás usando a força dos glúteos."
+    },
+    {
+        "id": "fly_invertido_maquina",
+        "name": "Fly Invertido na Máquina",
+        "muscleGroup": "Costas",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "12-15",
+        "restSeconds": 45,
+        "durationMinutes": 5,
+        "contraindications": ["Ombro"],
+        "checklist": [
+            "Sente-se de frente para a máquina (posição invertida)",
+            "Abra os braços para trás, apertando as escápulas",
+            "Retorne de forma controlada"
+        ],
+        "dangerAlert": "Não use peso excessivo. Esse exercício é para ativação, não para carga máxima.",
+        "animationSymbol": "figure.arms.open",
+        "instructions": "Sente-se na máquina na posição invertida. Abra os braços para trás focando nas escápulas."
+    },
+    {
+        "id": "supino_inclinado_smith",
+        "name": "Supino Inclinado no Smith",
+        "muscleGroup": "Peito",
+        "equipment": "Máquina",
+        "sets": 3,
+        "reps": "10-12",
+        "restSeconds": 60,
+        "durationMinutes": 6,
+        "contraindications": ["Ombro"],
+        "checklist": [
+            "Ajuste o banco em 30° de inclinação",
+            "Segure a barra na largura dos ombros",
+            "Desça até a barra tocar levemente o peito superior"
+        ],
+        "dangerAlert": "Sempre use as travas de segurança do Smith Machine. Nunca treine sozinho sem elas.",
+        "animationSymbol": "figure.strengthtraining.traditional",
+        "instructions": "Posicione o banco inclinado sob a barra do Smith. Deite-se e empurre a barra de forma controlada."
+    },
+    {
+        "id": "elevacao_frontal_polia",
+        "name": "Elevação Frontal na Polia",
+        "muscleGroup": "Ombros",
+        "equipment": "Polia",
+        "sets": 3,
+        "reps": "12-15",
+        "restSeconds": 45,
+        "durationMinutes": 5,
+        "contraindications": ["Ombro", "Pescoço"],
+        "checklist": [
+            "Fique de costas para a polia baixa",
+            "Eleve o braço com o cotovelo levemente flexionado",
+            "Suba até a linha dos ombros, não mais"
+        ],
+        "dangerAlert": "Não balance o corpo para gerar impulso. O braço deve subir apenas com a força do ombro.",
+        "animationSymbol": "figure.arms.open",
+        "instructions": "Posicione-se de costas para a polia baixa. Segure o pegador e eleve o braço à frente do corpo."
+    },
+    {
+        "id": "face_pull_polia",
+        "name": "Face Pull na Polia",
+        "muscleGroup": "Ombros",
+        "equipment": "Polia",
+        "sets": 3,
+        "reps": "15",
+        "restSeconds": 45,
+        "durationMinutes": 4,
+        "contraindications": ["Pescoço"],
+        "checklist": [
+            "Posicione a polia na altura do rosto",
+            "Puxe a corda em direção ao rosto, abrindo as mãos",
+            "Aperte as escápulas no final"
+        ],
+        "dangerAlert": "Não use peso pesado. É um exercício de ativação e postura, não de força máxima.",
+        "animationSymbol": "figure.rowing",
+        "instructions": "Posicione a polia alta. Segure a corda e puxe em direção ao rosto, abrindo os cotovelos."
+    },
+    {
+        "id": "rosca_martelo_polia",
+        "name": "Rosca Martelo na Polia",
+        "muscleGroup": "Bíceps",
+        "equipment": "Polia",
+        "sets": 3,
+        "reps": "12",
+        "restSeconds": 45,
+        "durationMinutes": 5,
+        "contraindications": [],
+        "checklist": [
+            "Segure a corda com pegada neutra (punhos para cima)",
+            "Flexione os cotovelos mantendo-os junto ao corpo",
+            "Desça devagar, controlando o peso"
+        ],
+        "dangerAlert": "Não projete os cotovelos para frente. Eles ficam colados ao corpo durante todo o exercício.",
+        "animationSymbol": "figure.strengthtraining.functional",
+        "instructions": "Posicione-se de frente para a polia baixa com a corda. Flexione com pegada neutra."
+    },
+    {
+        "id": "abdominal_polia_alta",
+        "name": "Abdominal na Polia Alta",
+        "muscleGroup": "Abdômen",
+        "equipment": "Polia",
+        "sets": 3,
+        "reps": "15",
+        "restSeconds": 45,
+        "durationMinutes": 4,
+        "contraindications": ["Lombar"],
+        "checklist": [
+            "Ajoelhe-se abaixo da polia alta segurando a corda",
+            "Flexione o tronco usando a força do abdômen",
+            "Volte devagar à posição inicial"
+        ],
+        "dangerAlert": "Não puxe com os braços. Os braços ficam fixos, a força vem do abdômen.",
+        "animationSymbol": "figure.core.training",
+        "instructions": "Ajoelhe-se na frente da polia alta. Segure a corda atrás da cabeça e flexione o tronco."
+    },
+    {
+        "id": "extensao_lombar_banco",
+        "name": "Extensão Lombar no Banco 45°",
+        "muscleGroup": "Costas",
+        "equipment": "Banco",
+        "sets": 3,
+        "reps": "12-15",
+        "restSeconds": 45,
+        "durationMinutes": 4,
+        "contraindications": ["Lombar"],
+        "checklist": [
+            "Posicione o quadril no apoio do banco",
+            "Desça o tronco de forma controlada",
+            "Suba até o corpo ficar reto, sem ultrapassar"
+        ],
+        "dangerAlert": "Não hiperextenda (arqueie) as costas no topo. Suba apenas até ficar alinhado com as pernas.",
+        "animationSymbol": "figure.strengthtraining.traditional",
+        "instructions": "Posicione-se no banco 45° com o quadril no apoio. Desça e suba o tronco controladamente."
+    }
+]
