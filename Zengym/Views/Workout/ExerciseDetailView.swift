@@ -84,13 +84,9 @@ struct ExerciseDetailView: View {
                 endPoint: .bottomTrailing
             )
 
-            VStack(spacing: 12) {
-                Image(systemName: exercise.animationSymbol)
-                    .font(.system(size: 80, weight: .light))
-                    .foregroundStyle(
-                        LinearGradient(colors: [.zenMint, .zenBlue], startPoint: .topLeading, endPoint: .bottomTrailing)
-                    )
-                    .symbolEffect(.pulse, options: .repeating)
+            VStack(spacing: 16) {
+                ExerciseAnimationView(exerciseId: exercise.id)
+                    .frame(height: 140)
 
                 Text(exercise.instructions)
                     .font(.zenCaption())
@@ -98,9 +94,9 @@ struct ExerciseDetailView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
             }
-            .padding(.vertical, 32)
+            .padding(.vertical, 24)
         }
-        .frame(height: 240)
+        .frame(height: 260)
     }
 
     // MARK: - Checklist
