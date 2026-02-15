@@ -7,8 +7,12 @@ struct ExerciseAnimationView: View {
 
     var body: some View {
         animationForExercise
+            .animation(
+                .easeInOut(duration: 1.5).repeatForever(autoreverses: true),
+                value: animate
+            )
             .onAppear {
-                withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     animate = true
                 }
             }
