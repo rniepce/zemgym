@@ -5,7 +5,6 @@ extension Color {
     // Primary backgrounds
     static let zenWhite = Color(red: 1.0, green: 1.0, blue: 1.0)
     static let zenIce = Color(red: 0.96, green: 0.97, blue: 0.98)
-    static let zenBackground = Color("ZenBackground")
 
     // Accent colors
     static let zenMint = Color(red: 0.30, green: 0.85, blue: 0.72)        // #4DD9B8 — success / health
