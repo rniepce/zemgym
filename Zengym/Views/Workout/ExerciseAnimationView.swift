@@ -3,60 +3,56 @@ import SwiftUI
 // MARK: - Exercise Animation Router
 struct ExerciseAnimationView: View {
     let exerciseId: String
-    @State private var animate = false
+    @State private var startDate = Date()
 
     var body: some View {
-        animationForExercise
-            .animation(
-                .easeInOut(duration: 1.5).repeatForever(autoreverses: true),
-                value: animate
-            )
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    animate = true
-                }
-            }
+        TimelineView(.animation) { timeline in
+            let elapsed = timeline.date.timeIntervalSince(startDate)
+            let progress = CGFloat((sin(elapsed * 2.0) + 1.0) / 2.0) // 0→1→0 smooth loop
+
+            animationForExercise(progress: progress)
+        }
     }
 
     @ViewBuilder
-    private var animationForExercise: some View {
+    private func animationForExercise(progress: CGFloat) -> some View {
         switch movementPattern {
         case .legPress:
-            LegPressAnimation(animate: animate)
+            LegPressAnimation(p: progress)
         case .legExtension:
-            LegExtensionAnimation(animate: animate)
+            LegExtensionAnimation(p: progress)
         case .legCurl:
-            LegCurlAnimation(animate: animate)
+            LegCurlAnimation(p: progress)
         case .hipAbduction:
-            HipAbductionAnimation(animate: animate)
+            HipAbductionAnimation(p: progress)
         case .calfRaise:
-            CalfRaiseAnimation(animate: animate)
+            CalfRaiseAnimation(p: progress)
         case .chestPress:
-            ChestPressAnimation(animate: animate)
+            ChestPressAnimation(p: progress)
         case .chestFly:
-            ChestFlyAnimation(animate: animate)
+            ChestFlyAnimation(p: progress)
         case .pulldown:
-            PulldownAnimation(animate: animate)
+            PulldownAnimation(p: progress)
         case .row:
-            RowAnimation(animate: animate)
+            RowAnimation(p: progress)
         case .shoulderPress:
-            ShoulderPressAnimation(animate: animate)
+            ShoulderPressAnimation(p: progress)
         case .lateralRaise:
-            LateralRaiseAnimation(animate: animate)
+            LateralRaiseAnimation(p: progress)
         case .bicepCurl:
-            BicepCurlAnimation(animate: animate)
+            BicepCurlAnimation(p: progress)
         case .tricepPushdown:
-            TricepPushdownAnimation(animate: animate)
+            TricepPushdownAnimation(p: progress)
         case .abdominal:
-            AbdominalAnimation(animate: animate)
+            AbdominalAnimation(p: progress)
         case .plank:
-            PlankAnimation(animate: animate)
+            PlankAnimation(p: progress)
         case .gluteKickback:
-            GluteKickbackAnimation(animate: animate)
+            GluteKickbackAnimation(p: progress)
         case .backExtension:
-            BackExtensionAnimation(animate: animate)
+            BackExtensionAnimation(p: progress)
         case .facePull:
-            FacePullAnimation(animate: animate)
+            FacePullAnimation(p: progress)
         }
     }
 
@@ -116,876 +112,657 @@ enum MovementPattern {
     case gluteKickback, backExtension, facePull
 }
 
-// MARK: - Stick Figure Base
+// Lerp helper
+private func lerp(_ a: CGFloat, _ b: CGFloat, _ t: CGFloat) -> CGFloat {
+    a + (b - a) * t
+}
+
+// MARK: - Stick Figure Colors
 struct StickFigure {
-    static let headRadius: CGFloat = 14
     static let bodyColor = Color.zenMint
     static let machineColor = Color.zenBlue.opacity(0.3)
     static let weightColor = Color.zenBlue
-    static let lineWidth: CGFloat = 4
+    static let lw: CGFloat = 4
 }
 
 // MARK: - 1. Leg Press
 struct LegPressAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
-            // Machine seat (angled)
-            RoundedRectangle(cornerRadius: 6)
-                .fill(StickFigure.machineColor)
-                .frame(width: 80, height: 30)
-                .rotationEffect(.degrees(-30))
-                .offset(x: -30, y: 10)
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
 
-            // Platform
-            RoundedRectangle(cornerRadius: 4)
-                .fill(StickFigure.weightColor.opacity(0.4))
-                .frame(width: 12, height: 60)
-                .offset(x: animate ? 50 : 35, y: animate ? -15 : 5)
+            // Machine seat
+            let seatRect = CGRect(x: cx - 70, y: cy - 5, width: 80, height: 25)
+            ctx.fill(RoundedRectangle(cornerRadius: 6).path(in: seatRect), with: .color(StickFigure.machineColor))
 
-            // Body
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 28, height: 28)
-                .offset(x: -50, y: -15)
+            // Head
+            let headCenter = CGPoint(x: cx - 50, y: cy - 25)
+            ctx.fill(Circle().path(in: CGRect(x: headCenter.x - 12, y: headCenter.y - 12, width: 24, height: 24)), with: .color(StickFigure.bodyColor))
 
             // Torso
-            LineShape(from: CGPoint(x: -50, y: 0), to: CGPoint(x: -20, y: 20))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx - 50, y: cy - 10), to: CGPoint(x: cx - 20, y: cy + 15), color: StickFigure.bodyColor)
+
+            // Hip joint
+            let hip = CGPoint(x: cx - 20, y: cy + 15)
+
+            // Knee position
+            let kneeX = lerp(cx + 5, cx + 30, p)
+            let kneeY = lerp(cy + 10, cy - 10, p)
+            let knee = CGPoint(x: kneeX, y: kneeY)
+
+            // Foot position
+            let footX = lerp(cx + 25, cx + 45, p)
+            let footY = lerp(cy - 5, cy - 20, p)
+            let foot = CGPoint(x: footX, y: footY)
 
             // Upper leg
-            LineShape(
-                from: CGPoint(x: -20, y: 20),
-                to: CGPoint(x: animate ? 30 : 10, y: animate ? -5 : 15)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-
+            drawLine(ctx, from: hip, to: knee, color: StickFigure.bodyColor)
             // Lower leg
-            LineShape(
-                from: CGPoint(x: animate ? 30 : 10, y: animate ? -5 : 15),
-                to: CGPoint(x: animate ? 45 : 30, y: animate ? -15 : 0)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: knee, to: foot, color: StickFigure.bodyColor)
 
-            // Foot on platform
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 10)
-                .offset(x: animate ? 45 : 30, y: animate ? -15 : 0)
+            // Platform
+            let platRect = CGRect(x: footX - 5, y: footY - 25, width: 10, height: 50)
+            ctx.fill(RoundedRectangle(cornerRadius: 4).path(in: platRect), with: .color(StickFigure.weightColor.opacity(0.4)))
+
+            // Foot circle
+            ctx.fill(Circle().path(in: CGRect(x: footX - 5, y: footY - 5, width: 10, height: 10)), with: .color(StickFigure.bodyColor))
         }
-        .frame(width: 180, height: 120)
+        .frame(width: 200, height: 130)
     }
 }
 
 // MARK: - 2. Leg Extension
 struct LegExtensionAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
+
             // Seat
-            RoundedRectangle(cornerRadius: 6)
-                .fill(StickFigure.machineColor)
-                .frame(width: 70, height: 25)
-                .offset(y: 15)
+            let seatRect = CGRect(x: cx - 45, y: cy + 5, width: 70, height: 20)
+            ctx.fill(RoundedRectangle(cornerRadius: 6).path(in: seatRect), with: .color(StickFigure.machineColor))
 
             // Back support
-            RoundedRectangle(cornerRadius: 4)
-                .fill(StickFigure.machineColor)
-                .frame(width: 20, height: 55)
-                .offset(x: -35, y: -5)
+            let backRect = CGRect(x: cx - 45, y: cy - 30, width: 18, height: 55)
+            ctx.fill(RoundedRectangle(cornerRadius: 4).path(in: backRect), with: .color(StickFigure.machineColor))
 
             // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 28)
-                .offset(x: -35, y: -42)
+            ctx.fill(Circle().path(in: CGRect(x: cx - 48, y: cy - 50, width: 24, height: 24)), with: .color(StickFigure.bodyColor))
 
             // Torso
-            LineShape(from: CGPoint(x: -35, y: -25), to: CGPoint(x: -20, y: 15))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx - 36, y: cy - 25), to: CGPoint(x: cx - 25, y: cy + 8), color: StickFigure.bodyColor)
 
-            // Upper leg (on seat)
-            LineShape(from: CGPoint(x: -20, y: 15), to: CGPoint(x: 20, y: 15))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            // Upper leg on seat
+            let kneePoint = CGPoint(x: cx + 15, y: cy + 8)
+            drawLine(ctx, from: CGPoint(x: cx - 25, y: cy + 8), to: kneePoint, color: StickFigure.bodyColor)
 
-            // Lower leg (animating)
-            LineShape(
-                from: CGPoint(x: 20, y: 15),
-                to: CGPoint(x: animate ? 55 : 25, y: animate ? 15 : 50)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            // Lower leg (extending)
+            let footX = lerp(cx + 20, cx + 55, p)
+            let footY = lerp(cy + 40, cy + 8, p)
+            drawLine(ctx, from: kneePoint, to: CGPoint(x: footX, y: footY), color: StickFigure.bodyColor)
 
             // Weight pad
-            RoundedRectangle(cornerRadius: 3)
-                .fill(StickFigure.weightColor.opacity(0.5))
-                .frame(width: 20, height: 8)
-                .offset(x: animate ? 50 : 22, y: animate ? 20 : 50)
+            let padRect = CGRect(x: footX - 8, y: footY - 2, width: 18, height: 7)
+            ctx.fill(RoundedRectangle(cornerRadius: 3).path(in: padRect), with: .color(StickFigure.weightColor.opacity(0.6)))
         }
-        .frame(width: 180, height: 120)
+        .frame(width: 200, height: 130)
     }
 }
 
 // MARK: - 3. Leg Curl
 struct LegCurlAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
+
             // Bench
-            RoundedRectangle(cornerRadius: 6)
-                .fill(StickFigure.machineColor)
-                .frame(width: 100, height: 20)
-                .offset(y: 10)
+            let benchRect = CGRect(x: cx - 55, y: cy + 2, width: 110, height: 16)
+            ctx.fill(RoundedRectangle(cornerRadius: 6).path(in: benchRect), with: .color(StickFigure.machineColor))
 
             // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 24)
-                .offset(x: -45, y: -8)
+            ctx.fill(Circle().path(in: CGRect(x: cx - 62, y: cy - 16, width: 22, height: 22)), with: .color(StickFigure.bodyColor))
 
             // Torso (lying)
-            LineShape(from: CGPoint(x: -35, y: 0), to: CGPoint(x: 10, y: 0))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx - 42, y: cy - 2), to: CGPoint(x: cx + 5, y: cy - 2), color: StickFigure.bodyColor)
 
             // Upper leg
-            LineShape(from: CGPoint(x: 10, y: 0), to: CGPoint(x: 40, y: 0))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx + 5, y: cy - 2), to: CGPoint(x: cx + 35, y: cy - 2), color: StickFigure.bodyColor)
 
-            // Lower leg (curling)
-            LineShape(
-                from: CGPoint(x: 40, y: 0),
-                to: CGPoint(x: animate ? 30 : 55, y: animate ? -30 : 0)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            // Lower leg (curling up)
+            let footX = lerp(cx + 55, cx + 25, p)
+            let footY = lerp(cy - 2, cy - 35, p)
+            drawLine(ctx, from: CGPoint(x: cx + 35, y: cy - 2), to: CGPoint(x: footX, y: footY), color: StickFigure.bodyColor)
 
             // Weight pad
-            Circle()
-                .fill(StickFigure.weightColor.opacity(0.5))
-                .frame(width: 12)
-                .offset(x: animate ? 30 : 55, y: animate ? -30 : 0)
+            ctx.fill(Circle().path(in: CGRect(x: footX - 6, y: footY - 6, width: 12, height: 12)), with: .color(StickFigure.weightColor.opacity(0.6)))
         }
-        .frame(width: 180, height: 100)
+        .frame(width: 200, height: 110)
     }
 }
 
 // MARK: - 4. Hip Abduction/Adduction
 struct HipAbductionAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
+
             // Seat
-            RoundedRectangle(cornerRadius: 6)
-                .fill(StickFigure.machineColor)
-                .frame(width: 50, height: 20)
-                .offset(y: 5)
+            let seatRect = CGRect(x: cx - 25, y: cy, width: 50, height: 16)
+            ctx.fill(RoundedRectangle(cornerRadius: 6).path(in: seatRect), with: .color(StickFigure.machineColor))
 
             // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 26)
-                .offset(y: -38)
+            ctx.fill(Circle().path(in: CGRect(x: cx - 12, y: cy - 48, width: 24, height: 24)), with: .color(StickFigure.bodyColor))
 
             // Torso
-            LineShape(from: CGPoint(x: 0, y: -22), to: CGPoint(x: 0, y: 5))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy - 22), to: CGPoint(x: cx, y: cy + 2), color: StickFigure.bodyColor)
 
             // Left leg
-            LineShape(
-                from: CGPoint(x: 0, y: 5),
-                to: CGPoint(x: animate ? -35 : -15, y: 45)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            let legSpread = lerp(12, 40, p)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy + 2), to: CGPoint(x: cx - legSpread, y: cy + 45), color: StickFigure.bodyColor)
 
             // Right leg
-            LineShape(
-                from: CGPoint(x: 0, y: 5),
-                to: CGPoint(x: animate ? 35 : 15, y: 45)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy + 2), to: CGPoint(x: cx + legSpread, y: cy + 45), color: StickFigure.bodyColor)
 
-            // Pads
-            Circle()
-                .fill(StickFigure.weightColor.opacity(0.4))
-                .frame(width: 10)
-                .offset(x: animate ? -35 : -15, y: 45)
-
-            Circle()
-                .fill(StickFigure.weightColor.opacity(0.4))
-                .frame(width: 10)
-                .offset(x: animate ? 35 : 15, y: 45)
+            // Knee pads
+            ctx.fill(Circle().path(in: CGRect(x: cx - legSpread - 5, y: cy + 40, width: 10, height: 10)), with: .color(StickFigure.weightColor.opacity(0.5)))
+            ctx.fill(Circle().path(in: CGRect(x: cx + legSpread - 5, y: cy + 40, width: 10, height: 10)), with: .color(StickFigure.weightColor.opacity(0.5)))
         }
-        .frame(width: 180, height: 120)
+        .frame(width: 200, height: 130)
     }
 }
 
 // MARK: - 5. Calf Raise
 struct CalfRaiseAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
+            let rise = lerp(0, -15, p)
+
             // Platform
-            RoundedRectangle(cornerRadius: 4)
-                .fill(StickFigure.machineColor)
-                .frame(width: 40, height: 10)
-                .offset(y: 48)
+            let platRect = CGRect(x: cx - 20, y: cy + 42, width: 40, height: 10)
+            ctx.fill(RoundedRectangle(cornerRadius: 4).path(in: platRect), with: .color(StickFigure.machineColor))
 
             // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 26)
-                .offset(y: animate ? -50 : -40)
+            ctx.fill(Circle().path(in: CGRect(x: cx - 12, y: cy - 48 + rise, width: 24, height: 24)), with: .color(StickFigure.bodyColor))
 
             // Torso
-            LineShape(
-                from: CGPoint(x: 0, y: animate ? -34 : -24),
-                to: CGPoint(x: 0, y: animate ? 8 : 18)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy - 22 + rise), to: CGPoint(x: cx, y: cy + 15 + rise), color: StickFigure.bodyColor)
 
             // Legs
-            LineShape(
-                from: CGPoint(x: 0, y: animate ? 8 : 18),
-                to: CGPoint(x: 0, y: 42)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy + 15 + rise), to: CGPoint(x: cx, y: cy + 40), color: StickFigure.bodyColor)
 
-            // Feet (tippy toes)
-            Capsule()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 20, height: 8)
-                .offset(y: 46)
+            // Feet
+            let footRect = CGRect(x: cx - 10, y: cy + 38, width: 20, height: 7)
+            ctx.fill(Capsule().path(in: footRect), with: .color(StickFigure.bodyColor))
 
             // Shoulder pads
-            RoundedRectangle(cornerRadius: 3)
-                .fill(StickFigure.weightColor.opacity(0.4))
-                .frame(width: 40, height: 8)
-                .offset(y: animate ? -36 : -26)
+            let padRect = CGRect(x: cx - 20, y: cy - 28 + rise, width: 40, height: 8)
+            ctx.fill(RoundedRectangle(cornerRadius: 3).path(in: padRect), with: .color(StickFigure.weightColor.opacity(0.5)))
         }
-        .frame(width: 180, height: 120)
+        .frame(width: 200, height: 130)
     }
 }
 
 // MARK: - 6. Chest Press
 struct ChestPressAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
+
             // Seat back
-            RoundedRectangle(cornerRadius: 6)
-                .fill(StickFigure.machineColor)
-                .frame(width: 20, height: 60)
-                .offset(x: -40, y: 0)
+            let backRect = CGRect(x: cx - 50, y: cy - 30, width: 18, height: 60)
+            ctx.fill(RoundedRectangle(cornerRadius: 6).path(in: backRect), with: .color(StickFigure.machineColor))
 
             // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 26)
-                .offset(x: -40, y: -40)
+            ctx.fill(Circle().path(in: CGRect(x: cx - 52, y: cy - 50, width: 24, height: 24)), with: .color(StickFigure.bodyColor))
 
             // Torso
-            LineShape(from: CGPoint(x: -40, y: -24), to: CGPoint(x: -40, y: 20))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx - 40, y: cy - 24), to: CGPoint(x: cx - 40, y: cy + 20), color: StickFigure.bodyColor)
 
-            // Upper arm
-            LineShape(
-                from: CGPoint(x: -35, y: -10),
-                to: CGPoint(x: animate ? 10 : -15, y: -10)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            // Arms pushing handles
+            let handX = lerp(cx - 15, cx + 35, p)
+            drawLine(ctx, from: CGPoint(x: cx - 35, y: cy - 10), to: CGPoint(x: handX, y: cy - 10), color: StickFigure.bodyColor)
 
-            // Forearm
-            LineShape(
-                from: CGPoint(x: animate ? 10 : -15, y: -10),
-                to: CGPoint(x: animate ? 40 : -5, y: animate ? -10 : -10)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-
-            // Weight handle
-            RoundedRectangle(cornerRadius: 3)
-                .fill(StickFigure.weightColor)
-                .frame(width: 8, height: 30)
-                .offset(x: animate ? 40 : -5, y: -10)
+            // Weight handles
+            let handleRect = CGRect(x: handX - 3, y: cy - 25, width: 7, height: 30)
+            ctx.fill(RoundedRectangle(cornerRadius: 3).path(in: handleRect), with: .color(StickFigure.weightColor))
         }
-        .frame(width: 180, height: 120)
+        .frame(width: 200, height: 130)
     }
 }
 
-// MARK: - 7. Chest Fly
+// MARK: - 7. Chest Fly (Peck Deck)
 struct ChestFlyAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
+
             // Back support
-            RoundedRectangle(cornerRadius: 4)
-                .fill(StickFigure.machineColor)
-                .frame(width: 16, height: 50)
-                .offset(y: -5)
+            let backRect = CGRect(x: cx - 8, y: cy - 30, width: 16, height: 50)
+            ctx.fill(RoundedRectangle(cornerRadius: 4).path(in: backRect), with: .color(StickFigure.machineColor))
 
             // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 26)
-                .offset(y: -40)
+            ctx.fill(Circle().path(in: CGRect(x: cx - 12, y: cy - 52, width: 24, height: 24)), with: .color(StickFigure.bodyColor))
+
+            // Arms spreading/closing
+            let armSpread = lerp(8, 45, 1 - p)
+            let armY = lerp(cy - 12, cy - 20, 1 - p)
 
             // Left arm
-            LineShape(
-                from: CGPoint(x: 0, y: -12),
-                to: CGPoint(x: animate ? -8 : -40, y: animate ? -12 : -20)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-
+            drawLine(ctx, from: CGPoint(x: cx, y: cy - 12), to: CGPoint(x: cx - armSpread, y: armY), color: StickFigure.bodyColor)
             // Right arm
-            LineShape(
-                from: CGPoint(x: 0, y: -12),
-                to: CGPoint(x: animate ? 8 : 40, y: animate ? -12 : -20)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy - 12), to: CGPoint(x: cx + armSpread, y: armY), color: StickFigure.bodyColor)
 
-            // Weight pads
-            Circle()
-                .fill(StickFigure.weightColor.opacity(0.5))
-                .frame(width: 12)
-                .offset(x: animate ? -8 : -40, y: animate ? -12 : -20)
-
-            Circle()
-                .fill(StickFigure.weightColor.opacity(0.5))
-                .frame(width: 12)
-                .offset(x: animate ? 8 : 40, y: animate ? -12 : -20)
+            // Pads
+            ctx.fill(Circle().path(in: CGRect(x: cx - armSpread - 6, y: armY - 6, width: 12, height: 12)), with: .color(StickFigure.weightColor.opacity(0.6)))
+            ctx.fill(Circle().path(in: CGRect(x: cx + armSpread - 6, y: armY - 6, width: 12, height: 12)), with: .color(StickFigure.weightColor.opacity(0.6)))
         }
-        .frame(width: 180, height: 120)
+        .frame(width: 200, height: 130)
     }
 }
 
 // MARK: - 8. Pulldown
 struct PulldownAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
-            // Cable line (vertical)
-            LineShape(from: CGPoint(x: 0, y: -55), to: CGPoint(x: 0, y: animate ? -5 : -45))
-                .stroke(StickFigure.weightColor.opacity(0.3), lineWidth: 2)
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
+
+            // Cable from top
+            let barY = lerp(cy - 45, cy - 5, p)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy - 55), to: CGPoint(x: cx, y: barY), color: StickFigure.weightColor.opacity(0.3), width: 2)
 
             // Bar
-            RoundedRectangle(cornerRadius: 2)
-                .fill(StickFigure.weightColor)
-                .frame(width: 60, height: 6)
-                .offset(y: animate ? -5 : -45)
+            let barRect = CGRect(x: cx - 30, y: barY - 3, width: 60, height: 6)
+            ctx.fill(RoundedRectangle(cornerRadius: 2).path(in: barRect), with: .color(StickFigure.weightColor))
 
             // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 26)
-                .offset(y: -30)
+            ctx.fill(Circle().path(in: CGRect(x: cx - 12, y: cy - 35, width: 24, height: 24)), with: .color(StickFigure.bodyColor))
 
             // Torso
-            LineShape(from: CGPoint(x: 0, y: -14), to: CGPoint(x: 0, y: 25))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy - 10), to: CGPoint(x: cx, y: cy + 25), color: StickFigure.bodyColor)
 
-            // Left arm
-            LineShape(
-                from: CGPoint(x: 0, y: -12),
-                to: CGPoint(x: -30, y: animate ? -5 : -45)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-
-            // Right arm
-            LineShape(
-                from: CGPoint(x: 0, y: -12),
-                to: CGPoint(x: 30, y: animate ? -5 : -45)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            // Arms to bar
+            drawLine(ctx, from: CGPoint(x: cx, y: cy - 8), to: CGPoint(x: cx - 28, y: barY), color: StickFigure.bodyColor)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy - 8), to: CGPoint(x: cx + 28, y: barY), color: StickFigure.bodyColor)
 
             // Seat
-            RoundedRectangle(cornerRadius: 4)
-                .fill(StickFigure.machineColor)
-                .frame(width: 50, height: 14)
-                .offset(y: 30)
+            let seatRect = CGRect(x: cx - 25, y: cy + 28, width: 50, height: 12)
+            ctx.fill(RoundedRectangle(cornerRadius: 4).path(in: seatRect), with: .color(StickFigure.machineColor))
         }
-        .frame(width: 180, height: 130)
+        .frame(width: 200, height: 140)
     }
 }
 
 // MARK: - 9. Row
 struct RowAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
+
             // Chest pad
-            RoundedRectangle(cornerRadius: 4)
-                .fill(StickFigure.machineColor)
-                .frame(width: 14, height: 40)
-                .offset(x: 10, y: -5)
+            let padRect = CGRect(x: cx + 5, y: cy - 25, width: 12, height: 40)
+            ctx.fill(RoundedRectangle(cornerRadius: 4).path(in: padRect), with: .color(StickFigure.machineColor))
 
             // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 26)
-                .offset(x: 12, y: -35)
+            ctx.fill(Circle().path(in: CGRect(x: cx + 2, y: cy - 48, width: 24, height: 24)), with: .color(StickFigure.bodyColor))
 
             // Torso
-            LineShape(from: CGPoint(x: 12, y: -20), to: CGPoint(x: 12, y: 25))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx + 14, y: cy - 22), to: CGPoint(x: cx + 14, y: cy + 20), color: StickFigure.bodyColor)
+
+            // Handle position
+            let handleX = lerp(cx - 45, cx - 5, p)
 
             // Arms pulling
-            LineShape(
-                from: CGPoint(x: 10, y: -8),
-                to: CGPoint(x: animate ? -10 : -40, y: -8)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx + 10, y: cy - 8), to: CGPoint(x: handleX, y: cy - 8), color: StickFigure.bodyColor)
 
             // Handle
-            RoundedRectangle(cornerRadius: 3)
-                .fill(StickFigure.weightColor)
-                .frame(width: 6, height: 20)
-                .offset(x: animate ? -10 : -40, y: -8)
+            let handleRect = CGRect(x: handleX - 3, y: cy - 18, width: 6, height: 20)
+            ctx.fill(RoundedRectangle(cornerRadius: 3).path(in: handleRect), with: .color(StickFigure.weightColor))
 
             // Cable
-            LineShape(
-                from: CGPoint(x: animate ? -10 : -40, y: -8),
-                to: CGPoint(x: -55, y: -8)
-            )
-            .stroke(StickFigure.weightColor.opacity(0.3), lineWidth: 2)
+            drawLine(ctx, from: CGPoint(x: handleX, y: cy - 8), to: CGPoint(x: cx - 60, y: cy - 8), color: StickFigure.weightColor.opacity(0.3), width: 2)
         }
-        .frame(width: 180, height: 120)
+        .frame(width: 200, height: 130)
     }
 }
 
 // MARK: - 10. Shoulder Press
 struct ShoulderPressAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
-            // Seat
-            RoundedRectangle(cornerRadius: 6)
-                .fill(StickFigure.machineColor)
-                .frame(width: 50, height: 16)
-                .offset(y: 30)
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
 
-            // Back rest
-            RoundedRectangle(cornerRadius: 4)
-                .fill(StickFigure.machineColor)
-                .frame(width: 16, height: 50)
-                .offset(y: 0)
+            // Seat + back
+            let seatRect = CGRect(x: cx - 25, y: cy + 20, width: 50, height: 14)
+            ctx.fill(RoundedRectangle(cornerRadius: 6).path(in: seatRect), with: .color(StickFigure.machineColor))
+            let backRect = CGRect(x: cx - 8, y: cy - 20, width: 16, height: 45)
+            ctx.fill(RoundedRectangle(cornerRadius: 4).path(in: backRect), with: .color(StickFigure.machineColor))
 
             // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 26)
-                .offset(y: -35)
+            ctx.fill(Circle().path(in: CGRect(x: cx - 12, y: cy - 42, width: 24, height: 24)), with: .color(StickFigure.bodyColor))
 
-            // Left arm pushing up
-            LineShape(
-                from: CGPoint(x: -5, y: -15),
-                to: CGPoint(x: -20, y: animate ? -50 : -15)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            // Arms pushing up
+            let handY = lerp(cy - 15, cy - 52, p)
 
-            // Right arm pushing up
-            LineShape(
-                from: CGPoint(x: 5, y: -15),
-                to: CGPoint(x: 20, y: animate ? -50 : -15)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx - 5, y: cy - 15), to: CGPoint(x: cx - 22, y: handY), color: StickFigure.bodyColor)
+            drawLine(ctx, from: CGPoint(x: cx + 5, y: cy - 15), to: CGPoint(x: cx + 22, y: handY), color: StickFigure.bodyColor)
 
-            // Weight handles
-            RoundedRectangle(cornerRadius: 3)
-                .fill(StickFigure.weightColor)
-                .frame(width: 8, height: 14)
-                .offset(x: -20, y: animate ? -50 : -15)
-
-            RoundedRectangle(cornerRadius: 3)
-                .fill(StickFigure.weightColor)
-                .frame(width: 8, height: 14)
-                .offset(x: 20, y: animate ? -50 : -15)
+            // Handles
+            let lhRect = CGRect(x: cx - 26, y: handY - 6, width: 8, height: 14)
+            ctx.fill(RoundedRectangle(cornerRadius: 3).path(in: lhRect), with: .color(StickFigure.weightColor))
+            let rhRect = CGRect(x: cx + 18, y: handY - 6, width: 8, height: 14)
+            ctx.fill(RoundedRectangle(cornerRadius: 3).path(in: rhRect), with: .color(StickFigure.weightColor))
         }
-        .frame(width: 180, height: 130)
+        .frame(width: 200, height: 140)
     }
 }
 
 // MARK: - 11. Lateral Raise
 struct LateralRaiseAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
+
             // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 26)
-                .offset(y: -40)
+            ctx.fill(Circle().path(in: CGRect(x: cx - 12, y: cy - 48, width: 24, height: 24)), with: .color(StickFigure.bodyColor))
 
             // Torso
-            LineShape(from: CGPoint(x: 0, y: -24), to: CGPoint(x: 0, y: 20))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy - 22), to: CGPoint(x: cx, y: cy + 18), color: StickFigure.bodyColor)
 
             // Legs
-            LineShape(from: CGPoint(x: 0, y: 20), to: CGPoint(x: -10, y: 50))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-            LineShape(from: CGPoint(x: 0, y: 20), to: CGPoint(x: 10, y: 50))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy + 18), to: CGPoint(x: cx - 10, y: cy + 48), color: StickFigure.bodyColor)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy + 18), to: CGPoint(x: cx + 10, y: cy + 48), color: StickFigure.bodyColor)
 
-            // Left arm raising
-            LineShape(
-                from: CGPoint(x: 0, y: -15),
-                to: CGPoint(x: animate ? -45 : -10, y: animate ? -25 : 10)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            // Arms raising
+            let armX = lerp(10, 48, p)
+            let armY = lerp(cy + 8, cy - 25, p)
 
-            // Right arm raising
-            LineShape(
-                from: CGPoint(x: 0, y: -15),
-                to: CGPoint(x: animate ? 45 : 10, y: animate ? -25 : 10)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy - 14), to: CGPoint(x: cx - armX, y: armY), color: StickFigure.bodyColor)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy - 14), to: CGPoint(x: cx + armX, y: armY), color: StickFigure.bodyColor)
 
             // Weights
-            Circle()
-                .fill(StickFigure.weightColor)
-                .frame(width: 10)
-                .offset(x: animate ? -45 : -10, y: animate ? -25 : 10)
-
-            Circle()
-                .fill(StickFigure.weightColor)
-                .frame(width: 10)
-                .offset(x: animate ? 45 : 10, y: animate ? -25 : 10)
+            ctx.fill(Circle().path(in: CGRect(x: cx - armX - 5, y: armY - 5, width: 10, height: 10)), with: .color(StickFigure.weightColor))
+            ctx.fill(Circle().path(in: CGRect(x: cx + armX - 5, y: armY - 5, width: 10, height: 10)), with: .color(StickFigure.weightColor))
         }
-        .frame(width: 180, height: 120)
+        .frame(width: 200, height: 130)
     }
 }
 
 // MARK: - 12. Bicep Curl
 struct BicepCurlAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
+
             // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 26)
-                .offset(y: -40)
+            ctx.fill(Circle().path(in: CGRect(x: cx - 12, y: cy - 48, width: 24, height: 24)), with: .color(StickFigure.bodyColor))
 
             // Torso
-            LineShape(from: CGPoint(x: 0, y: -24), to: CGPoint(x: 0, y: 20))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-
-            // Upper arm (fixed)
-            LineShape(from: CGPoint(x: 0, y: -12), to: CGPoint(x: 20, y: 10))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-
-            // Forearm (curling)
-            LineShape(
-                from: CGPoint(x: 20, y: 10),
-                to: CGPoint(x: animate ? 10 : 35, y: animate ? -15 : 35)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-
-            // Weight
-            RoundedRectangle(cornerRadius: 3)
-                .fill(StickFigure.weightColor)
-                .frame(width: 20, height: 8)
-                .offset(x: animate ? 10 : 35, y: animate ? -15 : 35)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy - 22), to: CGPoint(x: cx, y: cy + 18), color: StickFigure.bodyColor)
 
             // Legs
-            LineShape(from: CGPoint(x: 0, y: 20), to: CGPoint(x: -8, y: 50))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-            LineShape(from: CGPoint(x: 0, y: 20), to: CGPoint(x: 8, y: 50))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy + 18), to: CGPoint(x: cx - 8, y: cy + 48), color: StickFigure.bodyColor)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy + 18), to: CGPoint(x: cx + 8, y: cy + 48), color: StickFigure.bodyColor)
+
+            // Upper arm (fixed at side)
+            let elbowR = CGPoint(x: cx + 18, y: cy + 5)
+            drawLine(ctx, from: CGPoint(x: cx + 3, y: cy - 12), to: elbowR, color: StickFigure.bodyColor)
+
+            // Forearm (curling)
+            let handX = lerp(cx + 32, cx + 10, p)
+            let handY = lerp(cy + 30, cy - 18, p)
+            drawLine(ctx, from: elbowR, to: CGPoint(x: handX, y: handY), color: StickFigure.bodyColor)
+
+            // Weight
+            let wRect = CGRect(x: handX - 10, y: handY - 3, width: 20, height: 7)
+            ctx.fill(RoundedRectangle(cornerRadius: 3).path(in: wRect), with: .color(StickFigure.weightColor))
         }
-        .frame(width: 180, height: 120)
+        .frame(width: 200, height: 130)
     }
 }
 
 // MARK: - 13. Tricep Pushdown
 struct TricepPushdownAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
-            // Cable
-            LineShape(from: CGPoint(x: 0, y: -55), to: CGPoint(x: 0, y: animate ? 20 : -20))
-                .stroke(StickFigure.weightColor.opacity(0.3), lineWidth: 2)
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
+
+            // Cable from top
+            let barY = lerp(cy - 20, cy + 20, p)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy - 55), to: CGPoint(x: cx, y: barY), color: StickFigure.weightColor.opacity(0.3), width: 2)
 
             // Bar
-            RoundedRectangle(cornerRadius: 2)
-                .fill(StickFigure.weightColor)
-                .frame(width: 30, height: 6)
-                .offset(y: animate ? 20 : -20)
+            let barRect = CGRect(x: cx - 15, y: barY - 3, width: 30, height: 6)
+            ctx.fill(RoundedRectangle(cornerRadius: 2).path(in: barRect), with: .color(StickFigure.weightColor))
 
             // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 26)
-                .offset(y: -40)
+            ctx.fill(Circle().path(in: CGRect(x: cx - 12, y: cy - 45, width: 24, height: 24)), with: .color(StickFigure.bodyColor))
 
             // Torso
-            LineShape(from: CGPoint(x: 0, y: -24), to: CGPoint(x: 0, y: 20))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx, y: cy - 20), to: CGPoint(x: cx, y: cy + 20), color: StickFigure.bodyColor)
 
-            // Upper arms (fixed, close to body)
-            LineShape(from: CGPoint(x: -3, y: -12), to: CGPoint(x: -5, y: 5))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-            LineShape(from: CGPoint(x: 3, y: -12), to: CGPoint(x: 5, y: 5))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            // Upper arms (close to body)
+            drawLine(ctx, from: CGPoint(x: cx - 3, y: cy - 12), to: CGPoint(x: cx - 5, y: cy + 2), color: StickFigure.bodyColor)
+            drawLine(ctx, from: CGPoint(x: cx + 3, y: cy - 12), to: CGPoint(x: cx + 5, y: cy + 2), color: StickFigure.bodyColor)
 
             // Forearms (pushing down)
-            LineShape(
-                from: CGPoint(x: -5, y: 5),
-                to: CGPoint(x: -10, y: animate ? 20 : -5)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-            LineShape(
-                from: CGPoint(x: 5, y: 5),
-                to: CGPoint(x: 10, y: animate ? 20 : -5)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx - 5, y: cy + 2), to: CGPoint(x: cx - 12, y: barY), color: StickFigure.bodyColor)
+            drawLine(ctx, from: CGPoint(x: cx + 5, y: cy + 2), to: CGPoint(x: cx + 12, y: barY), color: StickFigure.bodyColor)
         }
-        .frame(width: 180, height: 130)
+        .frame(width: 200, height: 140)
     }
 }
 
 // MARK: - 14. Abdominal
 struct AbdominalAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
-            // Bench
-            RoundedRectangle(cornerRadius: 6)
-                .fill(StickFigure.machineColor)
-                .frame(width: 80, height: 16)
-                .offset(y: 20)
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
 
-            // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 24)
-                .offset(
-                    x: animate ? -15 : -35,
-                    y: animate ? -15 : 0
-                )
+            // Bench
+            let benchRect = CGRect(x: cx - 45, y: cy + 10, width: 90, height: 14)
+            ctx.fill(RoundedRectangle(cornerRadius: 6).path(in: benchRect), with: .color(StickFigure.machineColor))
+
+            // Head (crunching up)
+            let headX = lerp(cx - 38, cx - 18, p)
+            let headY = lerp(cy - 3, cy - 22, p)
+            ctx.fill(Circle().path(in: CGRect(x: headX - 10, y: headY - 10, width: 20, height: 20)), with: .color(StickFigure.bodyColor))
 
             // Torso (crunching)
-            LineShape(
-                from: CGPoint(x: animate ? -10 : -30, y: animate ? -3 : 10),
-                to: CGPoint(x: 10, y: 12)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            let shoulderX = lerp(cx - 32, cx - 12, p)
+            let shoulderY = lerp(cy + 5, cy - 8, p)
+            drawLine(ctx, from: CGPoint(x: shoulderX, y: shoulderY), to: CGPoint(x: cx + 5, y: cy + 8), color: StickFigure.bodyColor)
 
-            // Legs (bent)
-            LineShape(from: CGPoint(x: 10, y: 12), to: CGPoint(x: 30, y: -5))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-            LineShape(from: CGPoint(x: 30, y: -5), to: CGPoint(x: 40, y: 12))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            // Legs (bent, fixed)
+            drawLine(ctx, from: CGPoint(x: cx + 5, y: cy + 8), to: CGPoint(x: cx + 25, y: cy - 8), color: StickFigure.bodyColor)
+            drawLine(ctx, from: CGPoint(x: cx + 25, y: cy - 8), to: CGPoint(x: cx + 35, y: cy + 8), color: StickFigure.bodyColor)
         }
-        .frame(width: 180, height: 100)
+        .frame(width: 200, height: 110)
     }
 }
 
 // MARK: - 15. Plank
 struct PlankAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
-            // Body line (slight pulse)
-            LineShape(
-                from: CGPoint(x: -50, y: animate ? -2 : 2),
-                to: CGPoint(x: 40, y: animate ? -2 : 2)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth + 1)
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
+            let pulse = lerp(-2, 2, p)
+
+            // Ground
+            drawLine(ctx, from: CGPoint(x: cx - 65, y: cy + 18), to: CGPoint(x: cx + 65, y: cy + 18), color: StickFigure.machineColor, width: 2)
+
+            // Body line
+            drawLine(ctx, from: CGPoint(x: cx - 45, y: cy + pulse), to: CGPoint(x: cx + 40, y: cy + pulse), color: StickFigure.bodyColor, width: 5)
 
             // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 22)
-                .offset(x: -55, y: animate ? -12 : -8)
+            ctx.fill(Circle().path(in: CGRect(x: cx - 57, y: cy - 12 + pulse, width: 20, height: 20)), with: .color(StickFigure.bodyColor))
 
-            // Arms (supporting)
-            LineShape(from: CGPoint(x: -35, y: 0), to: CGPoint(x: -35, y: 18))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            // Arms
+            drawLine(ctx, from: CGPoint(x: cx - 30, y: cy + pulse), to: CGPoint(x: cx - 30, y: cy + 16), color: StickFigure.bodyColor)
 
             // Feet
-            LineShape(from: CGPoint(x: 40, y: 0), to: CGPoint(x: 45, y: 18))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx + 40, y: cy + pulse), to: CGPoint(x: cx + 44, y: cy + 16), color: StickFigure.bodyColor)
 
-            // Ground line
-            LineShape(from: CGPoint(x: -60, y: 20), to: CGPoint(x: 60, y: 20))
-                .stroke(StickFigure.machineColor, lineWidth: 2)
-
-            // Glow effect for core
-            Capsule()
-                .fill(StickFigure.bodyColor.opacity(animate ? 0.3 : 0.1))
-                .frame(width: 30, height: 14)
-                .offset(x: -5, y: 0)
+            // Core glow
+            let glowRect = CGRect(x: cx - 15, y: cy - 6 + pulse, width: 30, height: 12)
+            ctx.fill(Capsule().path(in: glowRect), with: .color(StickFigure.bodyColor.opacity(lerp(0.1, 0.35, p))))
         }
-        .frame(width: 180, height: 80)
+        .frame(width: 200, height: 80)
     }
 }
 
 // MARK: - 16. Glute Kickback
 struct GluteKickbackAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
+
             // Machine pad
-            RoundedRectangle(cornerRadius: 4)
-                .fill(StickFigure.machineColor)
-                .frame(width: 14, height: 40)
-                .offset(x: -10, y: -5)
+            let padRect = CGRect(x: cx - 18, y: cy - 22, width: 12, height: 40)
+            ctx.fill(RoundedRectangle(cornerRadius: 4).path(in: padRect), with: .color(StickFigure.machineColor))
 
             // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 24)
-                .offset(x: -10, y: -35)
+            ctx.fill(Circle().path(in: CGRect(x: cx - 22, y: cy - 46, width: 22, height: 22)), with: .color(StickFigure.bodyColor))
 
             // Torso
-            LineShape(from: CGPoint(x: -10, y: -20), to: CGPoint(x: -10, y: 15))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx - 12, y: cy - 22), to: CGPoint(x: cx - 12, y: cy + 12), color: StickFigure.bodyColor)
 
             // Standing leg
-            LineShape(from: CGPoint(x: -10, y: 15), to: CGPoint(x: -10, y: 45))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx - 12, y: cy + 12), to: CGPoint(x: cx - 12, y: cy + 42), color: StickFigure.bodyColor)
 
             // Kicking leg
-            LineShape(
-                from: CGPoint(x: -10, y: 15),
-                to: CGPoint(x: animate ? 35 : 0, y: animate ? 5 : 40)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            let kickX = lerp(cx - 2, cx + 38, p)
+            let kickY = lerp(cy + 38, cy + 2, p)
+            drawLine(ctx, from: CGPoint(x: cx - 12, y: cy + 12), to: CGPoint(x: kickX, y: kickY), color: StickFigure.bodyColor)
 
-            // Weight pad on leg
-            Circle()
-                .fill(StickFigure.weightColor.opacity(0.5))
-                .frame(width: 12)
-                .offset(x: animate ? 35 : 0, y: animate ? 5 : 40)
+            // Weight pad
+            ctx.fill(Circle().path(in: CGRect(x: kickX - 6, y: kickY - 6, width: 12, height: 12)), with: .color(StickFigure.weightColor.opacity(0.6)))
         }
-        .frame(width: 180, height: 110)
+        .frame(width: 200, height: 120)
     }
 }
 
 // MARK: - 17. Back Extension
 struct BackExtensionAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
+
             // Pad
-            RoundedRectangle(cornerRadius: 4)
-                .fill(StickFigure.machineColor)
-                .frame(width: 14, height: 30)
-                .rotationEffect(.degrees(45))
-                .offset(x: 5, y: 15)
-
-            // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 24)
-                .offset(
-                    x: animate ? -30 : -40,
-                    y: animate ? -25 : 10
-                )
-
-            // Torso (extending up)
-            LineShape(
-                from: CGPoint(x: animate ? -25 : -35, y: animate ? -12 : 15),
-                to: CGPoint(x: 5, y: 15)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            let padRect = CGRect(x: cx - 5, y: cy + 5, width: 30, height: 12)
+            ctx.fill(RoundedRectangle(cornerRadius: 4).path(in: padRect), with: .color(StickFigure.machineColor))
 
             // Legs (fixed)
-            LineShape(from: CGPoint(x: 5, y: 15), to: CGPoint(x: 30, y: 40))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx + 5, y: cy + 10), to: CGPoint(x: cx + 35, y: cy + 35), color: StickFigure.bodyColor)
+
+            // Torso (extending up)
+            let headX = lerp(cx - 42, cx - 30, p)
+            let headY = lerp(cy + 8, cy - 28, p)
+            let shoulderX = lerp(cx - 35, cx - 22, p)
+            let shoulderY = lerp(cy + 12, cy - 15, p)
+
+            drawLine(ctx, from: CGPoint(x: shoulderX, y: shoulderY), to: CGPoint(x: cx + 5, y: cy + 10), color: StickFigure.bodyColor)
+
+            // Head
+            ctx.fill(Circle().path(in: CGRect(x: headX - 10, y: headY - 10, width: 22, height: 22)), with: .color(StickFigure.bodyColor))
         }
-        .frame(width: 180, height: 100)
+        .frame(width: 200, height: 110)
     }
 }
 
 // MARK: - 18. Face Pull
 struct FacePullAnimation: View {
-    let animate: Bool
+    let p: CGFloat
 
     var body: some View {
-        ZStack {
-            // Cable
-            LineShape(
-                from: CGPoint(x: -50, y: -15),
-                to: CGPoint(x: animate ? -5 : -35, y: -15)
-            )
-            .stroke(StickFigure.weightColor.opacity(0.3), lineWidth: 2)
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
 
             // Head
-            Circle()
-                .fill(StickFigure.bodyColor)
-                .frame(width: 26)
-                .offset(x: 10, y: -35)
+            ctx.fill(Circle().path(in: CGRect(x: cx + 2, y: cy - 45, width: 24, height: 24)), with: .color(StickFigure.bodyColor))
 
             // Torso
-            LineShape(from: CGPoint(x: 10, y: -20), to: CGPoint(x: 10, y: 20))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-
-            // Arms pulling (elbows out)
-            LineShape(
-                from: CGPoint(x: 10, y: -15),
-                to: CGPoint(x: animate ? -5 : -25, y: animate ? -25 : -15)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-
-            LineShape(
-                from: CGPoint(x: 10, y: -15),
-                to: CGPoint(x: animate ? -5 : -25, y: animate ? -5 : -15)
-            )
-            .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-
-            // Rope ends
-            Circle()
-                .fill(StickFigure.weightColor)
-                .frame(width: 8)
-                .offset(x: animate ? -5 : -25, y: animate ? -25 : -15)
-            Circle()
-                .fill(StickFigure.weightColor)
-                .frame(width: 8)
-                .offset(x: animate ? -5 : -25, y: animate ? -5 : -15)
+            drawLine(ctx, from: CGPoint(x: cx + 14, y: cy - 20), to: CGPoint(x: cx + 14, y: cy + 18), color: StickFigure.bodyColor)
 
             // Legs
-            LineShape(from: CGPoint(x: 10, y: 20), to: CGPoint(x: 3, y: 48))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
-            LineShape(from: CGPoint(x: 10, y: 20), to: CGPoint(x: 17, y: 48))
-                .stroke(StickFigure.bodyColor, lineWidth: StickFigure.lineWidth)
+            drawLine(ctx, from: CGPoint(x: cx + 14, y: cy + 18), to: CGPoint(x: cx + 6, y: cy + 46), color: StickFigure.bodyColor)
+            drawLine(ctx, from: CGPoint(x: cx + 14, y: cy + 18), to: CGPoint(x: cx + 22, y: cy + 46), color: StickFigure.bodyColor)
+
+            // Rope handle positions
+            let ropeX = lerp(cx - 30, cx - 2, p)
+            let ropeTopY = lerp(cy - 15, cy - 28, p)
+            let ropeBotY = lerp(cy - 15, cy - 5, p)
+
+            // Cable
+            drawLine(ctx, from: CGPoint(x: cx - 55, y: cy - 15), to: CGPoint(x: ropeX, y: cy - 15), color: StickFigure.weightColor.opacity(0.3), width: 2)
+
+            // Arms pulling
+            drawLine(ctx, from: CGPoint(x: cx + 10, y: cy - 15), to: CGPoint(x: ropeX, y: ropeTopY), color: StickFigure.bodyColor)
+            drawLine(ctx, from: CGPoint(x: cx + 10, y: cy - 15), to: CGPoint(x: ropeX, y: ropeBotY), color: StickFigure.bodyColor)
+
+            // Rope ends
+            ctx.fill(Circle().path(in: CGRect(x: ropeX - 4, y: ropeTopY - 4, width: 8, height: 8)), with: .color(StickFigure.weightColor))
+            ctx.fill(Circle().path(in: CGRect(x: ropeX - 4, y: ropeBotY - 4, width: 8, height: 8)), with: .color(StickFigure.weightColor))
         }
-        .frame(width: 180, height: 120)
+        .frame(width: 200, height: 130)
     }
 }
 
-// MARK: - Line Shape Helper
-struct LineShape: Shape {
-    var from: CGPoint
-    var to: CGPoint
-
-    var animatableData: AnimatablePair<AnimatablePair<CGFloat, CGFloat>, AnimatablePair<CGFloat, CGFloat>> {
-        get { .init(.init(from.x, from.y), .init(to.x, to.y)) }
-        set {
-            from = CGPoint(x: newValue.first.first, y: newValue.first.second)
-            to = CGPoint(x: newValue.second.first, y: newValue.second.second)
-        }
-    }
-
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        let center = CGPoint(x: rect.midX, y: rect.midY)
-        path.move(to: CGPoint(x: center.x + from.x, y: center.y + from.y))
-        path.addLine(to: CGPoint(x: center.x + to.x, y: center.y + to.y))
-        return path
-    }
+// MARK: - Canvas Drawing Helper
+private func drawLine(_ ctx: GraphicsContext, from: CGPoint, to: CGPoint, color: Color, width: CGFloat = 4) {
+    var path = Path()
+    path.move(to: from)
+    path.addLine(to: to)
+    ctx.stroke(path, with: .color(color), style: StrokeStyle(lineWidth: width, lineCap: .round))
 }
