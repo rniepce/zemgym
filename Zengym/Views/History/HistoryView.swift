@@ -62,10 +62,12 @@ struct HistoryView: View {
     // MARK: - Weekly Summary
     private var weeklySummary: some View {
         let thisWeek = sessionsThisWeek
-        return HStack(spacing: 12) {
-            summaryPill(value: "\(thisWeek.count)", label: "treinos", icon: "flame.fill", color: .zenOrange)
-            summaryPill(value: "\(totalMinutesThisWeek)", label: "min", icon: "clock.fill", color: .zenBlue)
-            summaryPill(value: "\(Int(totalVolumeThisWeek))", label: "kg", icon: "scalemass.fill", color: .zenMint)
+        return GlassEffectContainer {
+            HStack(spacing: 12) {
+                summaryPill(value: "\(thisWeek.count)", label: "treinos", icon: "flame.fill", color: .zenOrange)
+                summaryPill(value: "\(totalMinutesThisWeek)", label: "min", icon: "clock.fill", color: .zenBlue)
+                summaryPill(value: "\(Int(totalVolumeThisWeek))", label: "kg", icon: "scalemass.fill", color: .zenMint)
+            }
         }
         .padding(.bottom, 8)
     }
@@ -86,11 +88,7 @@ struct HistoryView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .fill(Color.zenCard)
-                .shadow(color: .black.opacity(0.04), radius: 6, y: 3)
-        )
+        .zenGlass(cornerRadius: 18)
     }
 
     // MARK: - Computed Properties
@@ -164,10 +162,6 @@ struct SessionCard: View {
             }
         }
         .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .fill(Color.zenCard)
-                .shadow(color: .black.opacity(0.04), radius: 8, y: 3)
-        )
+        .zenGlass(cornerRadius: 18)
     }
 }

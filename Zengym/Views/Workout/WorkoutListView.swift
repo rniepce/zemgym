@@ -61,9 +61,11 @@ struct WorkoutListView: View {
 
     // MARK: - Header
     private var headerSection: some View {
-        HStack(spacing: 16) {
-            statPill(icon: "clock.fill", value: "\(duration) min", color: .zenBlue)
-            statPill(icon: "figure.strengthtraining.traditional", value: "\(exercises.count) exercícios", color: .zenMint)
+        GlassEffectContainer {
+            HStack(spacing: 16) {
+                statPill(icon: "clock.fill", value: "\(duration) min", color: .zenBlue)
+                statPill(icon: "figure.strengthtraining.traditional", value: "\(exercises.count) exercícios", color: .zenMint)
+            }
         }
         .padding(.top, 8)
     }
@@ -79,11 +81,7 @@ struct WorkoutListView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(
-            Capsule()
-                .fill(Color.zenCard)
-                .shadow(color: .black.opacity(0.04), radius: 4, y: 2)
-        )
+        .zenGlass(cornerRadius: 100)
     }
 
     // MARK: - Actions
@@ -158,11 +156,7 @@ struct ExerciseCard: View {
                 .buttonStyle(.plain)
             }
             .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 18)
-                    .fill(Color.zenCard)
-                    .shadow(color: .black.opacity(0.04), radius: 8, y: 3)
-            )
+            .zenGlass(cornerRadius: 18)
         }
         .buttonStyle(.plain)
     }

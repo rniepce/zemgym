@@ -25,6 +25,9 @@
 		A10016 /* ExerciseDatabase.json in Resources */ = {isa = PBXBuildFile; fileRef = B10016; };
 		A10017 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B10017; };
 		A10018 /* ExerciseAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10019; };
+		A10030 /* GlassModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10030; };
+		A10031 /* ZenBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10031; };
+		A10032 /* HealthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10032; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +51,9 @@
 		B10018 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B10019 /* ExerciseAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseAnimationView.swift; sourceTree = "<group>"; };
 		B10020 /* Zengym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zengym.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B10030 /* GlassModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassModifier.swift; sourceTree = "<group>"; };
+		B10031 /* ZenBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZenBackgroundView.swift; sourceTree = "<group>"; };
+		B10032 /* HealthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +95,8 @@
 			isa = PBXGroup;
 			children = (
 				B10002 /* Theme.swift */,
+				B10030 /* GlassModifier.swift */,
+				B10031 /* ZenBackgroundView.swift */,
 			);
 			path = Theme;
 			sourceTree = "<group>";
@@ -171,6 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				B10015 /* HealthKitManager.swift */,
+				B10032 /* HealthManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -269,6 +278,9 @@
 				A10014 /* ProfileView.swift in Sources */,
 				A10015 /* HealthKitManager.swift in Sources */,
 				A10018 /* ExerciseAnimationView.swift in Sources */,
+				A10030 /* GlassModifier.swift in Sources */,
+				A10031 /* ZenBackgroundView.swift in Sources */,
+				A10032 /* HealthManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,7 +308,7 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -320,7 +332,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
@@ -353,7 +365,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -384,7 +396,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

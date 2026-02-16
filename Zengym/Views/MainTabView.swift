@@ -25,5 +25,6 @@ struct MainTabView: View {
                 .tag(2)
         }
         .tint(.zenMint)
+        .tabBarMinimizeBehavior(.onScrollDown)
     }
 }

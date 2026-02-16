@@ -103,32 +103,34 @@ struct ProfileView: View {
             }
 
             if editingRestrictions {
-                VStack(spacing: 8) {
-                    ForEach(BodyArea.allCases) { area in
-                        Button {
-                            withAnimation {
-                                if profile.hasRestriction(area) {
-                                    profile.restrictions.removeAll { $0 == area }
-                                } else {
-                                    profile.restrictions.append(area)
+                GlassEffectContainer {
+                    VStack(spacing: 8) {
+                        ForEach(BodyArea.allCases) { area in
+                            Button {
+                                withAnimation {
+                                    if profile.hasRestriction(area) {
+                                        profile.restrictions.removeAll { $0 == area }
+                                    } else {
+                                        profile.restrictions.append(area)
+                                    }
                                 }
+                            } label: {
+                                HStack {
+                                    Image(systemName: profile.hasRestriction(area) ? "checkmark.circle.fill" : "circle")
+                                        .foregroundColor(profile.hasRestriction(area) ? .zenOrange : .zenTextTertiary)
+                                    Text(area.rawValue)
+                                        .font(.zenBody())
+                                        .foregroundColor(.zenTextPrimary)
+                                    Spacer()
+                                }
+                                .padding(12)
+                                .glassEffect(
+                                    profile.hasRestriction(area) ? .regular.interactive(true) : .regular,
+                                    in: .rect(cornerRadius: 12)
+                                )
                             }
-                        } label: {
-                            HStack {
-                                Image(systemName: profile.hasRestriction(area) ? "checkmark.circle.fill" : "circle")
-                                    .foregroundColor(profile.hasRestriction(area) ? .zenOrange : .zenTextTertiary)
-                                Text(area.rawValue)
-                                    .font(.zenBody())
-                                    .foregroundColor(.zenTextPrimary)
-                                Spacer()
-                            }
-                            .padding(12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(profile.hasRestriction(area) ? Color.zenOrangeLight : Color.zenIce)
-                            )
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
                 }
                 .padding(.top, 4)
@@ -150,10 +152,12 @@ struct ProfileView: View {
                     .foregroundColor(.zenTextPrimary)
             }
 
-            HStack(spacing: 12) {
-                statItem(value: "\(sessions.count)", label: "Treinos", color: .zenMint)
-                statItem(value: "\(totalMinutes)", label: "Minutos", color: .zenBlue)
-                statItem(value: "\(Int(totalVolume))", label: "kg Total", color: .zenOrange)
+            GlassEffectContainer {
+                HStack(spacing: 12) {
+                    statItem(value: "\(sessions.count)", label: "Treinos", color: .zenMint)
+                    statItem(value: "\(totalMinutes)", label: "Minutos", color: .zenBlue)
+                    statItem(value: "\(Int(totalVolume))", label: "kg Total", color: .zenOrange)
+                }
             }
         }
         .zenCard()
@@ -174,7 +178,9 @@ struct ProfileView: View {
     // MARK: - HealthKit
     private var healthKitSection: some View {
         Button {
-            HealthKitManager.shared.requestAuthorization()
+            Task {
+                await HealthManager.shared.requestAuthorization()
+            }
         } label: {
             HStack(spacing: 14) {
                 Image(systemName: "heart.fill")
@@ -192,8 +198,8 @@ struct ProfileView: View {
 
                 Spacer()
 
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.zenTextTertiary)
+                Image(systemName: HealthManager.shared.isAuthorized ? "checkmark.circle.fill" : "chevron.right")
+                    .foregroundColor(HealthManager.shared.isAuthorized ? .zenMint : .zenTextTertiary)
             }
         }
         .buttonStyle(.plain)
@@ -228,11 +234,7 @@ struct ProfileView: View {
                     .foregroundColor(.zenTextTertiary)
             }
             .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.zenCard)
-                    .shadow(color: .black.opacity(0.03), radius: 6, y: 2)
-            )
+            .zenGlass(cornerRadius: 16)
         }
         .buttonStyle(.plain)
     }

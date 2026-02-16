@@ -124,14 +124,8 @@ struct ExerciseDetailView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .fill(Color.zenMintLight.opacity(0.5))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18)
-                        .strokeBorder(Color.zenMint.opacity(0.3), lineWidth: 1)
-                )
-        )
+        .background(Color.zenMintLight.opacity(0.3))
+        .zenGlass(cornerRadius: 18)
     }
 
     // MARK: - Danger Alert
@@ -151,14 +145,8 @@ struct ExerciseDetailView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .fill(Color.zenOrangeLight.opacity(0.5))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18)
-                        .strokeBorder(Color.zenOrange.opacity(0.3), lineWidth: 1)
-                )
-        )
+        .background(Color.zenOrangeLight.opacity(0.3))
+        .zenGlass(cornerRadius: 18)
     }
 
     // MARK: - Set Logger
@@ -251,10 +239,7 @@ struct ExerciseDetailView: View {
             }
         }
         .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(Color.zenCard)
-        )
+        .zenGlass(cornerRadius: 14)
     }
 
     // MARK: - Rest Timer
@@ -432,10 +417,7 @@ struct EffortPickerSheet: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 20)
-                        .background(
-                            RoundedRectangle(cornerRadius: 18)
-                                .fill(Color.zenIce)
-                        )
+                        .zenGlass(cornerRadius: 18)
                     }
                     .buttonStyle(.plain)
                 }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TrainTodayView: View {
     let profile: UserProfile
+    @State private var healthManager = HealthManager.shared
     @State private var selectedDuration: Int = 45
     @State private var selectedSplit: WorkoutSplit = .fullBody
     @State private var generatedWorkout: [Exercise] = []
@@ -25,6 +26,11 @@ struct TrainTodayView: View {
 
                     // Split Picker
                     splitPicker
+
+                    // Health Stats (if connected)
+                    if healthManager.isAuthorized {
+                        healthStatsSection
+                    }
 
                     // Quick Stats
                     quickInfoSection
@@ -103,11 +109,7 @@ struct TrainTodayView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 32)
-            .background(
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(Color.zenCard)
-                    .shadow(color: .black.opacity(0.05), radius: 16, y: 6)
-            )
+            .zenGlass(cornerRadius: 24)
         }
         .buttonStyle(.plain)
         .onAppear {
@@ -124,32 +126,31 @@ struct TrainTodayView: View {
                 .font(.zenSubheadline())
                 .foregroundColor(.zenTextPrimary)
 
-            HStack(spacing: 12) {
-                ForEach(durations, id: \.self) { duration in
-                    Button {
-                        withAnimation(.spring(response: 0.3)) {
-                            selectedDuration = duration
+            GlassEffectContainer {
+                HStack(spacing: 12) {
+                    ForEach(durations, id: \.self) { duration in
+                        Button {
+                            withAnimation(.spring(response: 0.3)) {
+                                selectedDuration = duration
+                            }
+                        } label: {
+                            VStack(spacing: 4) {
+                                Text("\(duration)")
+                                    .font(.zenLargeNumber())
+                                    .foregroundColor(selectedDuration == duration ? .zenMint : .zenTextPrimary)
+                                Text("min")
+                                    .font(.zenCaption())
+                                    .foregroundColor(selectedDuration == duration ? .zenMint.opacity(0.8) : .zenTextSecondary)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 20)
+                            .glassEffect(
+                                selectedDuration == duration ? .regular.interactive(true) : .regular,
+                                in: .rect(cornerRadius: 20)
+                            )
                         }
-                    } label: {
-                        VStack(spacing: 4) {
-                            Text("\(duration)")
-                                .font(.zenLargeNumber())
-                                .foregroundColor(selectedDuration == duration ? .white : .zenTextPrimary)
-                            Text("min")
-                                .font(.zenCaption())
-                                .foregroundColor(selectedDuration == duration ? .white.opacity(0.8) : .zenTextSecondary)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 20)
-                        .background(
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(selectedDuration == duration ?
-                                      LinearGradient(colors: [.zenMint, .zenBlue], startPoint: .topLeading, endPoint: .bottomTrailing) :
-                                      LinearGradient(colors: [Color.zenCard, Color.zenCard], startPoint: .topLeading, endPoint: .bottomTrailing))
-                                .shadow(color: selectedDuration == duration ? .zenMint.opacity(0.3) : .black.opacity(0.04), radius: 8, y: 4)
-                        )
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
             }
         }
@@ -162,26 +163,27 @@ struct TrainTodayView: View {
                 .font(.zenSubheadline())
                 .foregroundColor(.zenTextPrimary)
 
-            HStack(spacing: 10) {
-                ForEach(WorkoutSplit.allCases, id: \.rawValue) { split in
-                    Button {
-                        withAnimation(.spring(response: 0.3)) {
-                            selectedSplit = split
+            GlassEffectContainer {
+                HStack(spacing: 10) {
+                    ForEach(WorkoutSplit.allCases, id: \.rawValue) { split in
+                        Button {
+                            withAnimation(.spring(response: 0.3)) {
+                                selectedSplit = split
+                            }
+                        } label: {
+                            Text(split.rawValue)
+                                .font(.zenCaption())
+                                .foregroundColor(selectedSplit == split ? .zenMint : .zenTextPrimary)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+                                .frame(maxWidth: .infinity)
+                                .glassEffect(
+                                    selectedSplit == split ? .regular.interactive(true) : .regular,
+                                    in: .capsule
+                                )
                         }
-                    } label: {
-                        Text(split.rawValue)
-                            .font(.zenCaption())
-                            .foregroundColor(selectedSplit == split ? .white : .zenTextPrimary)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                            .frame(maxWidth: .infinity)
-                            .background(
-                                Capsule()
-                                    .fill(selectedSplit == split ? Color.zenMint : Color.zenCard)
-                                    .shadow(color: .black.opacity(0.04), radius: 4, y: 2)
-                            )
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
             }
         }
@@ -189,14 +191,16 @@ struct TrainTodayView: View {
 
     // MARK: - Quick Info
     private var quickInfoSection: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 12) {
-                infoCard(icon: "figure.walk", title: "Seguro", subtitle: "Máquinas guiadas", color: .zenMint)
-                infoCard(icon: "brain.head.profile", title: "Simples", subtitle: "Sem complicação", color: .zenBlue)
-            }
-            HStack(spacing: 12) {
-                infoCard(icon: "arrow.triangle.swap", title: "Flexível", subtitle: "Troque exercícios", color: .zenOrange)
-                infoCard(icon: "heart.text.square", title: "Saúde", subtitle: "Integra com Apple", color: .zenRed)
+        GlassEffectContainer {
+            VStack(spacing: 12) {
+                HStack(spacing: 12) {
+                    infoCard(icon: "figure.walk", title: "Seguro", subtitle: "Máquinas guiadas", color: .zenMint)
+                    infoCard(icon: "brain.head.profile", title: "Simples", subtitle: "Sem complicação", color: .zenBlue)
+                }
+                HStack(spacing: 12) {
+                    infoCard(icon: "arrow.triangle.swap", title: "Flexível", subtitle: "Troque exercícios", color: .zenOrange)
+                    infoCard(icon: "heart.text.square", title: "Saúde", subtitle: "Integra com Apple", color: .zenRed)
+                }
             }
         }
     }
@@ -221,11 +225,50 @@ struct TrainTodayView: View {
             Spacer()
         }
         .padding(14)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.zenCard)
-                .shadow(color: .black.opacity(0.03), radius: 6, y: 2)
-        )
+        .zenGlass(cornerRadius: 16)
+    }
+
+    // MARK: - Health Stats
+    private var healthStatsSection: some View {
+        GlassEffectContainer {
+            HStack(spacing: 12) {
+                healthCard(
+                    icon: "flame.fill",
+                    value: "\(Int(healthManager.activeEnergy))",
+                    unit: "kcal",
+                    color: .zenOrange
+                )
+                
+                healthCard(
+                    icon: "figure.walk",
+                    value: "\(Int(healthManager.stepCount))",
+                    unit: "passos",
+                    color: .zenBlue
+                )
+            }
+        }
+    }
+    
+    private func healthCard(icon: String, value: String, unit: String, color: Color) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 20))
+                .foregroundColor(color)
+                .frame(width: 36, height: 36)
+                .background(Circle().fill(color.opacity(0.12)))
+            
+            VStack(alignment: .leading, spacing: 0) {
+                Text(value)
+                    .font(.zenHeadline())
+                    .foregroundColor(.zenTextPrimary)
+                Text(unit)
+                    .font(.zenCaption())
+                    .foregroundColor(.zenTextSecondary)
+            }
+            Spacer()
+        }
+        .padding(14)
+        .zenGlass(cornerRadius: 16)
     }
 
     // MARK: - Actions

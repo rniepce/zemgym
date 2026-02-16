@@ -3,6 +3,7 @@ import SwiftData
 
 struct OnboardingView: View {
     @Environment(\.modelContext) private var modelContext
+    @State private var healthManager = HealthManager.shared
     @State private var currentPage = 0
     @State private var selectedRestrictions: Set<BodyArea> = []
     @State private var userName: String = ""
@@ -10,30 +11,15 @@ struct OnboardingView: View {
 
     var body: some View {
         ZStack {
-            // Background gradient
-            LinearGradient(
-                colors: [Color.zenIce, Color.white],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            // Clean background — Liquid Glass handles visual depth
+            Color.zenIce.ignoresSafeArea()
 
             TabView(selection: $currentPage) {
-                // Page 1: Welcome
-                welcomePage
-                    .tag(0)
-
-                // Page 2: Name
-                namePage
-                    .tag(1)
-
-                // Page 3: Pain Map
-                painMapPage
-                    .tag(2)
-
-                // Page 4: Confirmation
-                confirmationPage
-                    .tag(3)
+                welcomePage.tag(0)
+                namePage.tag(1)
+                painMapPage.tag(2)
+                healthAccessPage.tag(3)
+                confirmationPage.tag(4)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .animation(.easeInOut(duration: 0.4), value: currentPage)
@@ -106,10 +92,7 @@ struct OnboardingView: View {
                 .font(.zenHeadline())
                 .multilineTextAlignment(.center)
                 .padding(16)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.zenIce)
-                )
+                .zenGlass()
                 .padding(.horizontal, 40)
 
             Spacer()
@@ -144,55 +127,53 @@ struct OnboardingView: View {
             }
             .padding(.top, 40)
 
-            VStack(spacing: 12) {
-                ForEach(BodyArea.allCases) { area in
-                    PainAreaButton(
-                        area: area,
-                        isSelected: selectedRestrictions.contains(area)
-                    ) {
-                        withAnimation(.spring(response: 0.3)) {
-                            if selectedRestrictions.contains(area) {
-                                selectedRestrictions.remove(area)
-                            } else {
-                                selectedRestrictions.insert(area)
+            GlassEffectContainer {
+                VStack(spacing: 12) {
+                    ForEach(BodyArea.allCases) { area in
+                        PainAreaButton(
+                            area: area,
+                            isSelected: selectedRestrictions.contains(area)
+                        ) {
+                            withAnimation(.spring(response: 0.3)) {
+                                if selectedRestrictions.contains(area) {
+                                    selectedRestrictions.remove(area)
+                                } else {
+                                    selectedRestrictions.insert(area)
+                                }
                             }
                         }
                     }
-                }
 
-                // "None" option
-                Button {
-                    withAnimation(.spring(response: 0.3)) {
-                        selectedRestrictions.removeAll()
-                    }
-                } label: {
-                    HStack(spacing: 14) {
-                        Image(systemName: selectedRestrictions.isEmpty ? "checkmark.circle.fill" : "circle")
-                            .font(.system(size: 24))
-                            .foregroundColor(selectedRestrictions.isEmpty ? .zenMint : .zenTextTertiary)
-
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Nenhuma restrição")
-                                .font(.zenSubheadline())
-                                .foregroundColor(.zenTextPrimary)
-                            Text("Estou saudável e pronto para treinar!")
-                                .font(.zenCaption())
-                                .foregroundColor(.zenTextSecondary)
+                    // "None" option
+                    Button {
+                        withAnimation(.spring(response: 0.3)) {
+                            selectedRestrictions.removeAll()
                         }
+                    } label: {
+                        HStack(spacing: 14) {
+                            Image(systemName: selectedRestrictions.isEmpty ? "checkmark.circle.fill" : "circle")
+                                .font(.system(size: 24))
+                                .foregroundColor(selectedRestrictions.isEmpty ? .zenMint : .zenTextTertiary)
 
-                        Spacer()
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Nenhuma restrição")
+                                    .font(.zenSubheadline())
+                                    .foregroundColor(.zenTextPrimary)
+                                Text("Estou saudável e pronto para treinar!")
+                                    .font(.zenCaption())
+                                    .foregroundColor(.zenTextSecondary)
+                            }
+
+                            Spacer()
+                        }
+                        .padding(16)
+                        .glassEffect(
+                            selectedRestrictions.isEmpty ? .regular.interactive(true) : .regular,
+                            in: .rect(cornerRadius: 16)
+                        )
                     }
-                    .padding(16)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(selectedRestrictions.isEmpty ? Color.zenMintLight : Color.zenIce)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .strokeBorder(selectedRestrictions.isEmpty ? Color.zenMint : Color.clear, lineWidth: 2)
-                            )
-                    )
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
             .padding(.horizontal, 24)
 
@@ -205,6 +186,92 @@ struct OnboardingView: View {
             .padding(.horizontal, 32)
             .padding(.bottom, 40)
         }
+    }
+
+    // MARK: - Health Access Page
+    private var healthAccessPage: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            Image(systemName: "heart.text.square.fill")
+                .font(.system(size: 70))
+                .foregroundStyle(
+                    LinearGradient(colors: [.zenRed, .zenOrange], startPoint: .topLeading, endPoint: .bottomTrailing)
+                )
+
+            VStack(spacing: 12) {
+                Text("Conecte sua Saúde")
+                    .font(.zenTitle())
+                    .foregroundColor(.zenTextPrimary)
+
+                Text("O Zengym usa o Apple Health para sugerir treinos baseados no seu nível de atividade.")
+                    .font(.zenBody())
+                    .foregroundColor(.zenTextSecondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.horizontal, 20)
+
+            GlassEffectContainer {
+                VStack(spacing: 16) {
+                    HStack(spacing: 12) {
+                        featurePill(icon: "figure.walk", text: "Passos")
+                        featurePill(icon: "flame.fill", text: "Calorias")
+                    }
+                    HStack(spacing: 12) {
+                        featurePill(icon: "bed.double.fill", text: "Sono")
+                        featurePill(icon: "heart.fill", text: "Coração")
+                    }
+                }
+            }
+            .padding(.horizontal, 40)
+
+            Spacer()
+
+            if healthManager.isAuthorized {
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.zenMint)
+                    Text("Conectado com sucesso!")
+                        .font(.zenSubheadline())
+                        .foregroundColor(.zenMint)
+                }
+                .padding()
+                .zenGlass()
+            } else {
+                Button {
+                    Task {
+                        await healthManager.requestAuthorization()
+                    }
+                } label: {
+                    HStack {
+                        Image(systemName: "applelogo")
+                        Text("Conectar Apple Health")
+                    }
+                }
+                .buttonStyle(ZenPrimaryButtonStyle(color: .black))
+                .padding(.horizontal, 32)
+            }
+
+            Button(healthManager.isAuthorized ? "Próximo" : "Pular por enquanto") {
+                withAnimation { currentPage = 4 }
+            }
+            .foregroundColor(healthManager.isAuthorized ? .zenMint : .zenTextTertiary)
+            .padding(.bottom, 40)
+        }
+    }
+
+    private func featurePill(icon: String, text: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundColor(.zenTextSecondary)
+            Text(text)
+                .font(.zenCaption())
+                .foregroundColor(.zenTextPrimary)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .zenGlass(cornerRadius: 12)
     }
 
     // MARK: - Confirmation Page
@@ -319,13 +386,9 @@ struct PainAreaButton: View {
                 Spacer()
             }
             .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(isSelected ? Color.zenOrangeLight : Color.zenIce)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .strokeBorder(isSelected ? Color.zenOrange : Color.clear, lineWidth: 2)
-                    )
+            .glassEffect(
+                isSelected ? .regular.interactive(true) : .regular,
+                in: .rect(cornerRadius: 20)
             )
         }
         .buttonStyle(.plain)

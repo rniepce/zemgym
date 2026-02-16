@@ -4,7 +4,6 @@ struct WorkoutSummaryView: View {
     let session: WorkoutSession
     @Environment(\.dismiss) private var dismiss
     @State private var animateConfetti = false
-    @State private var showHealthKitSaved = false
 
     var body: some View {
         ScrollView {
@@ -25,11 +24,7 @@ struct WorkoutSummaryView: View {
 
                 // Done Button
                 Button {
-                    HealthKitManager.shared.saveWorkout(
-                        durationMinutes: session.durationMinutes,
-                        calories: estimatedCalories
-                    )
-                    // Pop to root
+                    HealthManager.shared.fetchTodaysData()
                     dismiss()
                 } label: {
                     HStack(spacing: 8) {
@@ -74,10 +69,12 @@ struct WorkoutSummaryView: View {
 
     // MARK: - Stats
     private var statsSection: some View {
-        HStack(spacing: 12) {
-            statCard(value: "\(session.durationMinutes)", unit: "min", label: "Duração", icon: "clock.fill", color: .zenBlue)
-            statCard(value: "\(session.exerciseCount)", unit: "", label: "Exercícios", icon: "figure.strengthtraining.traditional", color: .zenMint)
-            statCard(value: "\(Int(session.totalVolume))", unit: "kg", label: "Volume", icon: "scalemass.fill", color: .zenOrange)
+        GlassEffectContainer {
+            HStack(spacing: 12) {
+                statCard(value: "\(session.durationMinutes)", unit: "min", label: "Duração", icon: "clock.fill", color: .zenBlue)
+                statCard(value: "\(session.exerciseCount)", unit: "", label: "Exercícios", icon: "figure.strengthtraining.traditional", color: .zenMint)
+                statCard(value: "\(Int(session.totalVolume))", unit: "kg", label: "Volume", icon: "scalemass.fill", color: .zenOrange)
+            }
         }
     }
 
@@ -104,11 +101,7 @@ struct WorkoutSummaryView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .fill(Color.zenCard)
-                .shadow(color: .black.opacity(0.04), radius: 8, y: 3)
-        )
+        .zenGlass(cornerRadius: 18)
     }
 
     // MARK: - Exercise Breakdown
@@ -135,10 +128,7 @@ struct WorkoutSummaryView: View {
                     }
                 }
                 .padding(14)
-                .background(
-                    RoundedRectangle(cornerRadius: 14)
-                        .fill(Color.zenCard)
-                )
+                .zenGlass(cornerRadius: 14)
             }
         }
     }
@@ -165,15 +155,10 @@ struct WorkoutSummaryView: View {
                 .foregroundColor(.zenMint)
         }
         .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.zenCard)
-                .shadow(color: .black.opacity(0.04), radius: 6, y: 2)
-        )
+        .zenGlass(cornerRadius: 16)
     }
 
     private var estimatedCalories: Int {
-        // Rough estimate: ~5 kcal/min for weight training
         session.durationMinutes * 5
     }
 }
